@@ -4,6 +4,7 @@ import io.netty.channel.ChannelId;
 import lombok.Data;
 import wei.yigulu.iec104.apdumodel.Apdu;
 import wei.yigulu.iec104.asdudataframe.typemodel.IecDataInterface;
+import wei.yigulu.iec104.exception.Iec104Exception;
 
 /**
  * 命令等待者
@@ -46,15 +47,16 @@ public class CommandWaiter {
 		this.dataAddress = dataAddress;
 	}
 
-	public synchronized IecDataInterface get() {
+	public synchronized IecDataInterface get() throws Iec104Exception {
 		if (this.data == null) {
 			try {
 				this.wait(5000);
+				return this.data;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		return this.data;
+		throw new Iec104Exception("控制命令无响应");
 	}
 
 	public synchronized void set(IecDataInterface data) {
@@ -67,9 +69,7 @@ public class CommandWaiter {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-
 		CommandWaiter that = (CommandWaiter) o;
-
 		if (!channelId.equals(that.channelId)) return false;
 		if (!sourceAddress.equals(that.sourceAddress)) return false;
 		if (!commonAddress.equals(that.commonAddress)) return false;
@@ -77,13 +77,5 @@ public class CommandWaiter {
 		return dataAddress.equals(that.dataAddress);
 	}
 
-	@Override
-	public int hashCode() {
-		int result = channelId.hashCode();
-		result = 31 * result + sourceAddress.hashCode();
-		result = 31 * result + commonAddress.hashCode();
-		result = 31 * result + typeId.hashCode();
-		result = 31 * result + dataAddress.hashCode();
-		return result;
-	}
+
 }

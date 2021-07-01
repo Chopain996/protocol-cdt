@@ -54,7 +54,7 @@ public class TcpModbusConfirm extends AbstractModbusConfirm {
 	@Override
 	public TcpModbusConfirm decode(ByteBuffer byteBuf) throws ModbusException {
 		if (byteBuf.remaining() != 12) {
-			throw new ModbusException("该帧非数据请求帧");
+			throw new ModbusException("该帧非命令确认帧");
 		}
 		this.tcpExtraCode.decode(byteBuf);
 		this.setLength(new P_AB().decode(byteBuf).getValue().intValue());

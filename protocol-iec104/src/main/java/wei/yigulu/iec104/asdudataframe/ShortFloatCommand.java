@@ -65,7 +65,7 @@ public class ShortFloatCommand extends AbstractDataFrameType {
 	 * @param val     值
 	 */
 	public ShortFloatCommand(Integer address, Float val) {
-		new ShortFloatCommand(address, val, null);
+		 this(address, val, null);
 	}
 
 

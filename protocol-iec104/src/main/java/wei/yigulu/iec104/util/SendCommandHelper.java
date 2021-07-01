@@ -25,6 +25,7 @@ public class SendCommandHelper {
 
 	public static boolean sendShortCommand(AbstractMasterBuilder masterBuilder, Integer sourceAddress, Integer commonAddress, Integer dataAddress, Float value) throws Exception {
 		ShortFloatCommand command = new ShortFloatCommand(dataAddress, value);
+		System.out.println(command.toString());
 		Apdu apdu = new Apdu();
 		Asdu asdu = command.generateBack();
 		asdu.setCommonAddress(commonAddress);
@@ -32,10 +33,18 @@ public class SendCommandHelper {
 		asdu.getCot().setNot(6);
 		apdu.setAsdu(asdu);
 		SendAndReceiveNumUtil.sendIFrame(apdu, masterBuilder.getFuture().channel(), masterBuilder.getLog());
-		CommandWaiter commandWaiter = new CommandWaiter(masterBuilder.getFuture().channel().id(), apdu, 0);
+		CommandWaiter commandWaiter = new CommandWaiter(masterBuilder.getFuture().channel().id(), apdu, dataAddress);
 		commandWaiters.add(commandWaiter);
-		IecDataInterface data = commandWaiter.get();
-		if (value.equals(data.getIecValue())) {
+		IecDataInterface data;
+		try {
+			data = commandWaiter.get();
+		}catch (Exception e){
+			throw e;
+		}finally {
+			commandWaiters.remove(commandWaiter);
+		}
+
+		if (data!=null && value.equals(data.getIecValue())) {
 			return true;
 		} else {
 			return false;
@@ -45,7 +54,6 @@ public class SendCommandHelper {
 
 	public static void setIecValue(CommandWaiter commandWaiter) {
 		int i = commandWaiters.indexOf(commandWaiter);
-		System.out.println(i);
 		if (i != -1) {
 			commandWaiters.get(i).set(commandWaiter.getData());
 		} else {
