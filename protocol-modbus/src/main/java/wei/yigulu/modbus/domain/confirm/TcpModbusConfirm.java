@@ -29,6 +29,7 @@ public class TcpModbusConfirm extends AbstractModbusConfirm {
 	 * 除去四个附加码 和两个长度字节 剩余的报文的字节个数
 	 */
 	@Setter
+	@Getter
 	protected Integer length = 6;
 
 	/**
@@ -45,7 +46,7 @@ public class TcpModbusConfirm extends AbstractModbusConfirm {
 	@Override
 	public TcpModbusConfirm encode(List<Byte> bytes) throws ModbusException {
 		tcpExtraCode.encode(bytes);
-		new P_AB(BigDecimal.valueOf(super.getLength())).encode(bytes);
+		new P_AB(BigDecimal.valueOf(getLength())).encode(bytes);
 		super.encode(bytes);
 		return this;
 	}
