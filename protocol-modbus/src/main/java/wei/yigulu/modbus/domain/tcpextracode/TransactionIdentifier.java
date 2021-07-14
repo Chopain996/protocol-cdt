@@ -43,21 +43,23 @@ public class TransactionIdentifier {
 	@Setter
 	private Byte extraCode2 = 0;
 
-	public static TransactionIdentifier getInstance(AbstractTcpMasterBuilder masterBuilder) throws ModbusException {
-		if (!((masterBuilder instanceof ModbusMasterBuilderInterface) && (masterBuilder instanceof AbstractTcpMasterBuilder))) {
-			throw new ModbusException("请传人实现了<ModbusMasterBuilderInterface>的TCPMaster");
-		}
-		Integer i = 0;
-		if (counters.containsKey(masterBuilder)) {
-			i = counters.get(masterBuilder);
-			if (i == 65535) {
-				i = 0;
-			} else {
-				i++;
+	public static synchronized TransactionIdentifier getInstance(AbstractTcpMasterBuilder masterBuilder) throws ModbusException {
+		synchronized (masterBuilder) {
+			if (!((masterBuilder instanceof ModbusMasterBuilderInterface) && (masterBuilder instanceof AbstractTcpMasterBuilder))) {
+				throw new ModbusException("请传人实现了<ModbusMasterBuilderInterface>的TCPMaster");
 			}
+			Integer i = 0;
+			if (counters.containsKey(masterBuilder)) {
+				i = counters.get(masterBuilder);
+				if (i == 65535) {
+					i = 0;
+				} else {
+					i++;
+				}
+			}
+			counters.put(masterBuilder, i);
+			return new TransactionIdentifier().setSeq(i).setExtraCode1((byte) (i >> 8)).setExtraCode2((byte) (i & 0xff));
 		}
-		counters.put(masterBuilder, i);
-		return new TransactionIdentifier().setSeq(i).setExtraCode1((byte) (i >> 8)).setExtraCode2((byte) (i & 0xff));
 	}
 
 	public void encode(List<Byte> bytes) {
