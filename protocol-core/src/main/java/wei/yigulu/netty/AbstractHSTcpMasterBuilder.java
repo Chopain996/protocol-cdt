@@ -21,70 +21,70 @@ import lombok.experimental.Accessors;
 public abstract class AbstractHSTcpMasterBuilder extends AbstractTcpMasterBuilder {
 
 
-	/**
-	 * Hs master builder
-	 *
-	 * @param ip   ip
-	 * @param port port
-	 */
-	public AbstractHSTcpMasterBuilder(String ip, Integer port) {
-		super(ip, port);
-	}
+    /**
+     * Hs master builder
+     *
+     * @param ip   ip
+     * @param port port
+     */
+    public AbstractHSTcpMasterBuilder(String ip, Integer port) {
+        super(ip, port);
+    }
 
-	/**
-	 * Hs master builder
-	 *
-	 * @param ip        ip
-	 * @param port      port
-	 * @param spareIp   备 ip
-	 * @param sparePort 备 port
-	 */
-	public AbstractHSTcpMasterBuilder(String ip, Integer port, String spareIp, Integer sparePort) {
-		super(ip, port);
-		this.spareIp = spareIp;
-		this.sparePort = sparePort;
-	}
+    /**
+     * Hs master builder
+     *
+     * @param ip        ip
+     * @param port      port
+     * @param spareIp   备 ip
+     * @param sparePort 备 port
+     */
+    public AbstractHSTcpMasterBuilder(String ip, Integer port, String spareIp, Integer sparePort) {
+        super(ip, port);
+        this.spareIp = spareIp;
+        this.sparePort = sparePort;
+    }
 
-	/**
-	 * 备对端ip
-	 */
-	@Getter
-	@Setter
-	private String spareIp;
+    /**
+     * 备对端ip
+     */
+    @Getter
+    @Setter
+    private String spareIp;
 
-	/**
-	 * 备对端port
-	 */
-	@Getter
-	@Setter
-	private Integer sparePort;
+    /**
+     * 备对端port
+     */
+    @Getter
+    @Setter
+    private Integer sparePort;
 
 
-	@Override
-	public ChannelFutureListener getOrCreateConnectionListener() {
-		if (this.connectionListener == null) {
-			this.connectionListener = new HSConnectionListener(this);
-		}
-		return this.connectionListener;
-	}
+    @Override
+    public ChannelFutureListener getOrCreateConnectionListener() {
+        if (this.connectionListener == null) {
+            this.connectionListener = new HSConnectionListener(this);
+        }
+        return this.connectionListener;
+    }
 
-	/**
-	 * 切换主备机
-	 */
-	public void switchover() {
-		String temporaryIp;
-		int temporaryPort;
-		if (spareIp != null && !"".equals(spareIp)) {
-			temporaryIp = this.ip;
-			this.ip = this.spareIp;
-			this.spareIp = temporaryIp;
-		}
-		if (sparePort != 0) {
-			temporaryPort = this.port;
-			this.port = this.sparePort;
-			this.sparePort = temporaryPort;
-		}
-	}
+    /**
+     * 切换主备机
+     */
+    public void switchover() {
+        String temporaryIp;
+        int temporaryPort;
+        if (spareIp != null && !"".equals(spareIp)) {
+            temporaryIp = this.ip;
+            this.ip = this.spareIp;
+            this.spareIp = temporaryIp;
+        }
+        if (sparePort != null && sparePort != 0) {
+            temporaryPort = this.port;
+            this.port = this.sparePort;
+            this.sparePort = temporaryPort;
+        }
+    }
 
 
 }
