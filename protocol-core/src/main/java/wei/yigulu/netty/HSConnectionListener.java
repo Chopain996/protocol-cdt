@@ -7,6 +7,7 @@ import io.netty.util.internal.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
+import wei.yigulu.utils.FutureListenerReconnectThreadPool;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,12 +19,11 @@ import java.util.concurrent.TimeUnit;
  * @version 3.0
  */
 @AllArgsConstructor
-@NoArgsConstructor
 public class HSConnectionListener implements ChannelFutureListener {
 
 	private Logger log;
 
-	private AbstractHSTcpMasterBuilder masterBuilder;
+	private final AbstractHSTcpMasterBuilder masterBuilder;
 
 	private int retryTimes;
 
@@ -40,7 +40,7 @@ public class HSConnectionListener implements ChannelFutureListener {
 	@Override
 	public void operationComplete(ChannelFuture channelFuture) throws Exception {
 		if (channelFuture == null || channelFuture.channel() == null || !channelFuture.channel().isActive()) {
-			this.masterBuilder.getOrCreateWorkGroup().schedule(() -> {
+			FutureListenerReconnectThreadPool.getInstance().submitReconnectJob(masterBuilder,(() -> {
 				try {
 					if (masterBuilder.future == null || !masterBuilder.future.channel().isActive()) {
 						if (this.retryTimes < 10) {
@@ -71,7 +71,7 @@ public class HSConnectionListener implements ChannelFutureListener {
 						ex.printStackTrace();
 					}
 				}
-			}, 3L, TimeUnit.SECONDS);
+			}));
 		} else {
 			log.info("服务端{}:{}链接成功...", this.masterBuilder.getIp(), this.masterBuilder.getPort());
 		}

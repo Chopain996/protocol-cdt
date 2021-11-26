@@ -89,9 +89,10 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 		log.debug("发出U帧，启动命令");
 		this.isInitiative = false;
 		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		InetSocketAddress localIpSocket = (InetSocketAddress) ctx.channel().localAddress();
 		String clientIp = ipSocket.getAddress().getHostAddress();
 		Integer clientPort = ipSocket.getPort();
-		log.info("连接" + clientIp + ":" + clientPort + "服务端成功");
+		log.info("连接" + clientIp + ":" + clientPort + "服务端成功，本地端口："+localIpSocket.getPort());
 		LinkContainer.getInstance().getLinks().put(ctx.channel().id(), new Iec104Link(ctx.channel(), clientIp, clientPort, Iec104Link.Role.SLAVER, masterBuilder.getLog()));
 		ctx.writeAndFlush(Unpooled.copiedBuffer(TechnicalTerm.START));
 		this.masterBuilder.connected();

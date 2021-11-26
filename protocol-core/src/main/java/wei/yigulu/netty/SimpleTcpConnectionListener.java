@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.slf4j.Logger;
+import wei.yigulu.utils.FutureListenerReconnectThreadPool;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,7 @@ public class SimpleTcpConnectionListener implements ChannelFutureListener {
 	@Override
 	public void operationComplete(ChannelFuture channelFuture) throws Exception {
 		if (channelFuture == null || channelFuture.channel() == null || !channelFuture.channel().isActive()) {
-			this.future = this.masterBuilder.getOrCreateWorkGroup().schedule(() -> {
+			FutureListenerReconnectThreadPool.getInstance().submitReconnectJob(masterBuilder,() -> {
 				try {
 					if (masterBuilder.future == null || !masterBuilder.future.channel().isActive()) {
 						log.error("服务端{}:{}链接不上，开始重连操作", this.masterBuilder.getIp(), this.masterBuilder.getPort());
@@ -54,7 +55,7 @@ public class SimpleTcpConnectionListener implements ChannelFutureListener {
 						ex.printStackTrace();
 					}
 				}
-			}, 6L, TimeUnit.SECONDS);
+			});
 		} else {
 			log.warn("masterBuilder已经连接成功，不进行重连操作");
 		}

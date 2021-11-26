@@ -89,8 +89,8 @@ public class ModbusRequestDataUtils {
 	public static List<Obj4RequestCoil> splitModbusRequest(List<Integer> locator, int slave, FunctionCode functionCode) throws ModbusException {
 		List<Obj4RequestCoil> list = new ArrayList<>();
 		Collections.sort(locator);
-		Integer max = locator.get(0);
-		Integer min = locator.get(locator.size() - 1);
+		Integer min = locator.get(0);
+		Integer max = locator.get(locator.size() - 1);
 		List<Integer> ls = new ArrayList<>();
 		if (max - min < MAXLENGTH) {
 			list.add(new Obj4RequestCoil(slave, functionCode, locator));
