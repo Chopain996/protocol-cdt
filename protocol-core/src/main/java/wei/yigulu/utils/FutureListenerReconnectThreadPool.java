@@ -13,39 +13,47 @@ import java.util.concurrent.*;
  */
 public class FutureListenerReconnectThreadPool {
 
-    private static class LazyHolder {
-        private static final FutureListenerReconnectThreadPool INSTANCE = new FutureListenerReconnectThreadPool();
-    }
+	ScheduledExecutorService pool = Executors.newScheduledThreadPool(10);
+	private Map<BaseProtocolBuilder, ScheduledFuture> scheduledFutureMap = new ConcurrentHashMap<>();
 
-    private FutureListenerReconnectThreadPool() {
-    }
+	private FutureListenerReconnectThreadPool() {
+	}
 
-    private Map<BaseProtocolBuilder, ScheduledFuture> scheduledFutureMap = new ConcurrentHashMap<>();
+	public static final FutureListenerReconnectThreadPool getInstance() {
+		return LazyHolder.INSTANCE;
+	}
 
-    public static final FutureListenerReconnectThreadPool getInstance() {
-        return LazyHolder.INSTANCE;
-    }
+	public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command) {
+		return submitReconnectJob(protocolBuilder, command, 30);
+	}
 
-    ScheduledExecutorService pool = Executors.newScheduledThreadPool(10);
+	public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command, int delaySecond) {
+		synchronized (protocolBuilder) {
+            protocolBuilder.getLog().info("{},添加延时重连任务", protocolBuilder.getBuilderId());
+			if (this.scheduledFutureMap.containsKey(protocolBuilder)) {
+				ScheduledFuture f = this.scheduledFutureMap.get(protocolBuilder);
+				//线程池内有客户端对应的定时任务线程
+				if (!f.isDone() ) {
+					//如果之前提交的定时任务未执行完毕
+                    protocolBuilder.getLog().info("重连任务中已经包含未执行的重连任务", protocolBuilder.getBuilderId());
+					f.cancel(true);
+				}
+			}
+			this.scheduledFutureMap.put(protocolBuilder, pool.schedule(command, delaySecond, TimeUnit.SECONDS));
+		}
+		return this.scheduledFutureMap.get(protocolBuilder);
+	}
 
+	public void remove(BaseProtocolBuilder protocolBuilder) {
+		if (this.scheduledFutureMap.containsKey(protocolBuilder)) {
+			if (!this.scheduledFutureMap.get(protocolBuilder).isDone()) {
+				this.scheduledFutureMap.get(protocolBuilder).cancel(true);
+			}
+			this.scheduledFutureMap.remove(protocolBuilder);
+		}
+	}
 
-    public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command) {
-        return submitReconnectJob(protocolBuilder, command, 5);
-    }
-
-    public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command, int delaySecond) {
-        synchronized (protocolBuilder) {
-            protocolBuilder.getLog().info("{},添加延时重连任务",protocolBuilder.getBuilderId());
-            if (this.scheduledFutureMap.containsKey(protocolBuilder)) {
-                ScheduledFuture f = this.scheduledFutureMap.get(protocolBuilder);
-                //线程池内有客户端对应的定时任务线程
-                if (!f.isDone() || !f.isCancelled()) {
-                    //如果之前提交的定时任务未执行完毕
-                    f.cancel(true);
-                }
-            }
-            this.scheduledFutureMap.put(protocolBuilder, pool.schedule(command, delaySecond, TimeUnit.SECONDS));
-        }
-        return this.scheduledFutureMap.get(protocolBuilder);
-    }
+	private static class LazyHolder {
+		private static final FutureListenerReconnectThreadPool INSTANCE = new FutureListenerReconnectThreadPool();
+	}
 }

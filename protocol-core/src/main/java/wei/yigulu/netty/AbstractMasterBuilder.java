@@ -28,7 +28,7 @@ public abstract class AbstractMasterBuilder extends AbstractClientBuilder implem
 		if (getFuture() != null && getFuture().channel().isActive()) {
 			getLog().info("se ==> " + DataConvertor.Byte2String(bytes));
 			getFuture().channel().writeAndFlush(Unpooled.copiedBuffer(bytes));
-		}else{
+		} else {
 			throw new RuntimeException("无客户端连接");
 		}
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractMasterBuilder extends AbstractClientBuilder implem
 		if (getFuture() != null && getFuture().channel().isActive()) {
 			getLog().info("se ==> " + DataConvertor.ByteBuf2String(byteBuf));
 			getFuture().channel().writeAndFlush(Unpooled.copiedBuffer(byteBuf));
-		}else{
+		} else {
 			throw new RuntimeException("无客户端连接");
 		}
 	}

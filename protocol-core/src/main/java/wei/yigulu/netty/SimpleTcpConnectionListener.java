@@ -2,12 +2,6 @@ package wei.yigulu.netty;
 
 
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.util.concurrent.ScheduledFuture;
-import org.slf4j.Logger;
-import wei.yigulu.utils.FutureListenerReconnectThreadPool;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 负责监听启动时连接失败，重新连接功能
@@ -17,13 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @version 3.0
  */
 
-public class SimpleTcpConnectionListener implements ChannelFutureListener {
-
-	private Logger log;
-
-	private AbstractTcpMasterBuilder masterBuilder;
-
-	ScheduledFuture<?> future;
+public class SimpleTcpConnectionListener extends ProtocolConnectionListener<AbstractTcpMasterBuilder> {
 
 	/**
 	 * Only host connection listener
@@ -31,33 +19,26 @@ public class SimpleTcpConnectionListener implements ChannelFutureListener {
 	 * @param masterBuilder master builder
 	 */
 	public SimpleTcpConnectionListener(AbstractTcpMasterBuilder masterBuilder) {
-		this.masterBuilder = masterBuilder;
-		this.log = masterBuilder.getLog();
+		super(masterBuilder);
 	}
 
 
 	@Override
-	public void operationComplete(ChannelFuture channelFuture) throws Exception {
-		if (channelFuture == null || channelFuture.channel() == null || !channelFuture.channel().isActive()) {
-			FutureListenerReconnectThreadPool.getInstance().submitReconnectJob(masterBuilder,() -> {
-				try {
-					if (masterBuilder.future == null || !masterBuilder.future.channel().isActive()) {
-						log.error("服务端{}:{}链接不上，开始重连操作", this.masterBuilder.getIp(), this.masterBuilder.getPort());
-						masterBuilder.create();
-					} else {
-						log.warn("masterBuilder在延迟过程中已由其他线程连接成功，此处略过重连");
-					}
-				} catch (Exception e) {
-					log.error("TcpMaster重试连接时发生异常", e);
-					try {
-						operationComplete(channelFuture);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			});
-		} else {
-			log.warn("masterBuilder已经连接成功，不进行重连操作");
+	protected void reconnectFuture(ChannelFuture channelFuture) {
+		try {
+			if (masterBuilder.future == null || !masterBuilder.future.channel().isActive()) {
+				log.error("服务端{}:{}链接不上，开始重连操作", this.masterBuilder.getIp(), this.masterBuilder.getPort());
+				masterBuilder.createByUnBlock();
+			} else {
+				log.warn("masterBuilder在延迟过程中已由其他线程连接成功，此处略过重连");
+			}
+		} catch (Exception e) {
+			log.error("TcpMaster重试连接时发生异常", e);
+			try {
+				operationComplete(channelFuture);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 }

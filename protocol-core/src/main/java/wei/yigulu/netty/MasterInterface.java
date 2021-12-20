@@ -14,13 +14,13 @@ public interface MasterInterface {
 	 *
 	 * @param bytes
 	 */
-	public void sendFrameToOpposite(byte[] bytes);
+	void sendFrameToOpposite(byte[] bytes);
 
 	/**
 	 * 向对端 发送数据帧
 	 *
 	 * @param byteBuf
 	 */
-	public void sendFrameToOpposite(ByteBuf byteBuf);
+	void sendFrameToOpposite(ByteBuf byteBuf);
 
 }

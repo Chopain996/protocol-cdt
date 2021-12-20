@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import wei.yigulu.threadpool.LocalThreadPool;
+import wei.yigulu.utils.FutureListenerReconnectThreadPool;
 
 
 /**
@@ -40,22 +41,24 @@ public abstract class AbstractClientBuilder extends BaseProtocolBuilder {
 	/**
 	 * Connection listener
 	 */
-	protected ChannelFutureListener connectionListener = null;
+	protected ProtocolConnectionListener connectionListener = null;
 
 
 	protected ProtocolChannelInitializer channelInitializer = null;
 
 
 	public void stop() {
+		log.info("关闭通道{}", this.builderId);
 		if (this.future != null) {
 			this.future.removeListener(getOrCreateConnectionListener());
-			if (!this.future.channel().eventLoop().isShutdown()) {
-				this.future.channel().close();
-			}
+			this.future.addListener(ChannelFutureListener.CLOSE);
 		}
+		getOrCreateConnectionListener().stop();
+		this.connectionListener = null;
 		if (this.workGroup != null) {
 			this.workGroup.shutdownGracefully();
 		}
+		FutureListenerReconnectThreadPool.getInstance().remove(this);
 		this.bootstrap = null;
 		this.workGroup = null;
 	}
@@ -95,7 +98,7 @@ public abstract class AbstractClientBuilder extends BaseProtocolBuilder {
 	 *
 	 * @return or create connection listener
 	 */
-	public abstract ChannelFutureListener getOrCreateConnectionListener();
+	public abstract ProtocolConnectionListener getOrCreateConnectionListener();
 
 	/**
 	 * null则创建，有则获取获取ChannelInitializer

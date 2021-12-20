@@ -70,11 +70,14 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 	public void create() {
 		synchronized (this) {
 			if (future != null) {
-				future.removeListener(getOrCreateConnectionListener());
-				if (!future.channel().eventLoop().isShutdown()) {
-					future.channel().close();
-				}
+				this.future.removeListener(getOrCreateConnectionListener());
+				this.future.addListener(ChannelFutureListener.CLOSE);
 				future = null;
+			}
+			try {
+				Thread.sleep(5000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			log.debug("创建连接");
 			try {
@@ -127,7 +130,7 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 	}
 
 	@Override
-	public ChannelFutureListener getOrCreateConnectionListener() {
+	public ProtocolConnectionListener getOrCreateConnectionListener() {
 		if (this.connectionListener == null) {
 			this.connectionListener = new SimpleTcpConnectionListener(this);
 		}

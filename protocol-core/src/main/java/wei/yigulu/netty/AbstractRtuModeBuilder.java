@@ -1,7 +1,6 @@
 package wei.yigulu.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
 import lombok.Getter;
@@ -96,7 +95,7 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	}
 
 	@Override
-	public ChannelFutureListener getOrCreateConnectionListener() {
+	public ProtocolConnectionListener getOrCreateConnectionListener() {
 		if (this.connectionListener == null) {
 			this.connectionListener = new RtuModeConnectionListener(this);
 		}
