@@ -166,7 +166,7 @@ public class NoQualityNormalizedIntegerType extends AbstractDataFrameType {
             s.append(addresses.get(0).toString() + "\n");
             int i = 0;
             for (Integer e : datas) {
-                s.append("点位：" + addresses.get(0) + (i++) + ",");
+                s.append("点位：" + (addresses.get(0).getAddress() + (i++)) + ",");
                 s.append("值为 ：" + e + "\n");
             }
         } else {

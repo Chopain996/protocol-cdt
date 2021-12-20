@@ -195,7 +195,7 @@ public class ShortIntegerType extends AbstractDataFrameType {
             s.append(addresses.get(0).toString() + "\n");
             int i = 0;
             for (Map.Entry<IeMeasuredQuality, Integer> e : datas.entrySet()) {
-                s.append("点位：" + addresses.get(0) + (i++) + ",");
+                s.append("点位：" + (addresses.get(0).getAddress() + (i++)) + ",");
                 s.append("值为 ：" + e.getValue() + ";" + e.getKey().toString() + "\n");
             }
         } else {
