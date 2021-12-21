@@ -47,6 +47,10 @@ public abstract class AbstractClientBuilder extends BaseProtocolBuilder {
 	protected ProtocolChannelInitializer channelInitializer = null;
 
 
+	public boolean isConnected(){
+		return this.future!=null && this.future.channel().isActive();
+	}
+
 	public void stop() {
 		log.info("关闭通道{}", this.builderId);
 		if (this.future != null) {

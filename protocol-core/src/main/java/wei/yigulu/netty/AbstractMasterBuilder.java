@@ -25,7 +25,7 @@ public abstract class AbstractMasterBuilder extends AbstractClientBuilder implem
 	 */
 	@Override
 	public void sendFrameToOpposite(byte[] bytes) {
-		if (getFuture() != null && getFuture().channel().isActive()) {
+		if (isConnected()) {
 			getLog().info("se ==> " + DataConvertor.Byte2String(bytes));
 			getFuture().channel().writeAndFlush(Unpooled.copiedBuffer(bytes));
 		} else {
@@ -40,7 +40,7 @@ public abstract class AbstractMasterBuilder extends AbstractClientBuilder implem
 	 */
 	@Override
 	public void sendFrameToOpposite(ByteBuf byteBuf) {
-		if (getFuture() != null && getFuture().channel().isActive()) {
+		if (isConnected()) {
 			getLog().info("se ==> " + DataConvertor.ByteBuf2String(byteBuf));
 			getFuture().channel().writeAndFlush(Unpooled.copiedBuffer(byteBuf));
 		} else {
