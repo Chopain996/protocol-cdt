@@ -13,8 +13,6 @@ import java.util.Random;
 @Slf4j
 public class TestRtuSlave {
 	public static void main(String[] args) throws InterruptedException, ModbusException {
-
-
 		ModbusRtuSlaverBuilder slaver = new ModbusRtuSlaverBuilder("COM1");
 		slaver.createByUnBlock();
 		Thread.sleep(3000L);
