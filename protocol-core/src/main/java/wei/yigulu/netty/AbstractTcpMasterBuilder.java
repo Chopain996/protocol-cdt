@@ -73,11 +73,11 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 				this.future.removeListener(getOrCreateConnectionListener());
 				this.future.addListener(ChannelFutureListener.CLOSE);
 				future = null;
-			}
-			try {
-				Thread.sleep(5000L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				try {
+					Thread.sleep(5000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			log.debug("创建连接");
 			try {
