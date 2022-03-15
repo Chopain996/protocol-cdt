@@ -21,6 +21,7 @@ public class Iec104Exception extends Exception {
 	 * @param msg msg
 	 */
 	public Iec104Exception(String msg) {
+		super(msg);
 		this.msg = msg;
 	}
 

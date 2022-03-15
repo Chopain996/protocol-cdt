@@ -16,6 +16,11 @@ public class FutureListenerReconnectThreadPool {
 	ScheduledExecutorService pool = Executors.newScheduledThreadPool(10);
 	private Map<BaseProtocolBuilder, ScheduledFuture> scheduledFutureMap = new ConcurrentHashMap<>();
 
+	/**
+	 * 重新连接延迟
+	 */
+	public static int  RECONNECT_DELAY=30;
+
 	private FutureListenerReconnectThreadPool() {
 	}
 
@@ -24,18 +29,18 @@ public class FutureListenerReconnectThreadPool {
 	}
 
 	public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command) {
-		return submitReconnectJob(protocolBuilder, command, 30);
+		return submitReconnectJob(protocolBuilder, command, RECONNECT_DELAY);
 	}
 
 	public ScheduledFuture submitReconnectJob(BaseProtocolBuilder protocolBuilder, Runnable command, int delaySecond) {
 		synchronized (protocolBuilder) {
-            protocolBuilder.getLog().info("{},添加延时重连任务", protocolBuilder.getBuilderId());
+			protocolBuilder.getLog().info("{},添加延时重连任务", protocolBuilder.getBuilderId());
 			if (this.scheduledFutureMap.containsKey(protocolBuilder)) {
 				ScheduledFuture f = this.scheduledFutureMap.get(protocolBuilder);
 				//线程池内有客户端对应的定时任务线程
 				if (!f.isDone() ) {
 					//如果之前提交的定时任务未执行完毕
-                    protocolBuilder.getLog().info("重连任务中已经包含未执行的重连任务", protocolBuilder.getBuilderId());
+					protocolBuilder.getLog().info("重连任务中已经包含未执行的重连任务", protocolBuilder.getBuilderId());
 					f.cancel(true);
 				}
 			}
