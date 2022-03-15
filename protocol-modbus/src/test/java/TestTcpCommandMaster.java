@@ -21,7 +21,7 @@ public class TestTcpCommandMaster {
 		ModbusTcpMasterBuilder master = new ModbusTcpMasterBuilder("127.0.0.1", 5002);
 		master.createByUnBlock();
 		TcpSynchronousWaitingRoom.waitTime = 5000L;
-		Thread.sleep(3000L);
+		Thread.sleep(5000L);
 		Random random = new Random();
 		BigDecimal val;
 		BigDecimal val1;
