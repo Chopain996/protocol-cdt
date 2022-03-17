@@ -71,7 +71,9 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 		synchronized (this) {
 			if (future != null) {
 				this.future.removeListener(getOrCreateConnectionListener());
-				this.future.addListener(ChannelFutureListener.CLOSE);
+				if (!future.channel().eventLoop().isShutdown()) {
+					this.future.addListener(ChannelFutureListener.CLOSE);
+				}
 				future = null;
 				try {
 					Thread.sleep(5000L);

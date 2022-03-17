@@ -126,7 +126,7 @@ public class BooleanType extends AbstractDataFrameType {
 	@Override
 	public Asdu generateBack() {
 		Asdu asdu = new Asdu();
-		asdu.setTypeId(1);
+		asdu.setTypeId(TYPEID);
 		asdu.setDataFrame(this);
 		asdu.getVsq().setSq(this.addresses.size() == 1 ? 1 : 0);
 		asdu.getVsq().setNum(this.datas.size());

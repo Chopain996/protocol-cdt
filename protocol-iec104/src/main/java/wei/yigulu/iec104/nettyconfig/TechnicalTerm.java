@@ -77,6 +77,10 @@ public class TechnicalTerm {
 	 * 单点信息
 	 */
 	public static final Integer SINGEL_POINT_TYPE = 1;
+	/**
+	 * 单点带长时标信息
+	 */
+	public static final Integer SINGEL_POINT_TIME_TYPE = 30;
 
 
 	/**
@@ -89,6 +93,11 @@ public class TechnicalTerm {
 	 * 测量值，规一化值
 	 */
 	public static final Integer NORMALIZED_INTEGER_TYPE = 9;
+
+	/**
+	 * 测量值，规一化值 带时间
+	 */
+	public static final Integer NORMALIZED_INTEGER_TIME_TYPE = 34;
 
 	/**
 	 * 测量值，标度化值
