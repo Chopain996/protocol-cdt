@@ -10,10 +10,20 @@ import lombok.NoArgsConstructor;
  * @author 修唯xiuwei
  * @version 3.0
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class Iec104Exception extends Exception {
+
+
+	/**
+	 * Iec exception
+	 *
+	 * @param msg msg
+	 */
+	public Iec104Exception(int code,String msg) {
+		super(msg);
+		this.code=code;
+		this.msg = msg;
+	}
 
 	/**
 	 * Iec exception
