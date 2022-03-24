@@ -89,8 +89,7 @@ public class SlaverHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	 */
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
-		log.error("串口异常消息:{}", cause);
+		log.error("串口异常消息:", cause);
 	}
 
 	@Override

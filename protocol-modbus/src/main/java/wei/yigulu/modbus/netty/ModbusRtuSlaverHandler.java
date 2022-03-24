@@ -69,8 +69,7 @@ public class ModbusRtuSlaverHandler extends SimpleChannelInboundHandler<ByteBuf>
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		cause.printStackTrace();
-		modbusSlaver.getLog().error(cause.getMessage());
-		modbusSlaver.getLog().error("串口异常消息:{}", cause.getMessage());
+		modbusSlaver.getLog().error("串口异常消息:", cause.getMessage());
 	}
 
 	@Override

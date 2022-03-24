@@ -78,8 +78,7 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 		}
 		this.exceptionNum++;
 		ctx.flush();
-		cause.printStackTrace();
-		log.error("发生{}次异常，异常内容{}", this.exceptionNum, cause.getLocalizedMessage());
+		log.error("发生{}次异常，异常内容：", this.exceptionNum, cause);
 
 	}
 

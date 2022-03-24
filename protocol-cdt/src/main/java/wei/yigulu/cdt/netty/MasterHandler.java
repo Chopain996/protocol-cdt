@@ -63,9 +63,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	 */
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
-		log.error(cause.getMessage());
-		log.error("串口异常消息:{}", cause.getMessage());
+		log.error("串口异常消息:", cause.getMessage());
 	}
 
 	@Override
