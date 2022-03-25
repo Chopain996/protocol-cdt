@@ -107,6 +107,11 @@ public class TechnicalTerm {
 	 * 测量值，短浮点数
 	 */
 	public static final Integer SHORT_FLOAT_TYPE = 13;
+	/**
+	 * 测量值，短浮点数 带时标
+	 */
+	public static final Integer SHORT_FLOAT_TYPE_TIME = 36;
+
 
 
 	/**

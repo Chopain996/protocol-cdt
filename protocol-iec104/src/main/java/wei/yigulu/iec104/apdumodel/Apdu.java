@@ -247,7 +247,8 @@ public class Apdu {
 		if (this.apciType == ApciType.I_FORMAT) {
 			try {
 				if(this.asdu.getDataFrame()==null){
-					throw new Iec104Exception("I帧数据体为空");
+					log.error("I帧数据体为空");
+					return;
 				}
 				bb = this.asdu.getDataFrame().handleAndAnswer(this);
 			} catch (Exception e) {
