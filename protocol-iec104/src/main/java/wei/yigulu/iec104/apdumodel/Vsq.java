@@ -33,7 +33,7 @@ public class Vsq {
 	public Vsq readByte(Byte value) {
 		original = value;
 		//可变结构限定词，转为二进制后获取第8位
-		sq = value>>7;
+		sq = (value&0xff)>>7;
 		num = value&0x7f;
 		return this;
 	}
