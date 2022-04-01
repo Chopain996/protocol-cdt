@@ -28,15 +28,9 @@ public class Cot {
 	 */
 	public Cot readByte(Byte value) {
 		original = value;
-		String cotFormat = value > 0 ? String.format("%08d", Integer.parseInt(Integer.toBinaryString(original))) : "00000011";
-		//可变结构限定词，转为二进制后获取第8位
-		if (Integer.parseInt(cotFormat.substring(0, 1)) == 1) {
-			test = true;
-		}
-		if (Integer.parseInt(cotFormat.substring(1, 2)) == 1) {
-			negativeConfirm = true;
-		}
-		not = Integer.parseInt(cotFormat.substring(2, 8), 2);
+		test=value>>7==1;
+		negativeConfirm=(value&0x40)>>7==1;
+		not=value&0x3f;
 		return this;
 	}
 

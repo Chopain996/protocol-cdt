@@ -32,10 +32,9 @@ public class Vsq {
 	 */
 	public Vsq readByte(Byte value) {
 		original = value;
-		String vsqFormat = String.format("%08d", Integer.parseInt(Integer.toBinaryString(this.original & 0xff)));
 		//可变结构限定词，转为二进制后获取第8位
-		sq = Integer.parseInt(vsqFormat.substring(0, 1));
-		num = Integer.parseInt(vsqFormat.substring(1, 8), 2);
+		sq = value>>7;
+		num = value&0x7f;
 		return this;
 	}
 

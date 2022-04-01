@@ -63,16 +63,14 @@ public class IeProofreadTime {
 		int minute = time.getMinuteOfHour();
 		int second = time.getSecondOfMinute();
 		int milliSecond = time.getMillisOfSecond();
-		String nums = Integer.toBinaryString(second * 1000 + milliSecond);
-		String secondStr = nums.substring(nums.length() - 8);
-		String milliSecondStr = nums.substring(0, nums.length() - 8);
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(Integer.parseInt(milliSecondStr, 2)), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(Integer.parseInt(secondStr, 2)), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(minute), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(hour), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(day), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(month), 16)));
-		buffer.add((byte) (Integer.parseInt(Integer.toHexString(year - 2000), 16)));
+		int nums = second * 1000 + milliSecond;
+		buffer.add((byte) (nums&0xff));
+		buffer.add((byte) (nums&0xff00>>8));
+		buffer.add((byte) (minute&0xff));
+		buffer.add((byte) (hour&0xff));
+		buffer.add((byte) (day&0xff));
+		buffer.add((byte) (month&0xff));
+		buffer.add((byte) ((year - 2000)&0xff));
 	}
 
 	@Override
