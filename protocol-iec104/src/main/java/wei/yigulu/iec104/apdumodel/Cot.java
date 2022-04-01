@@ -29,7 +29,7 @@ public class Cot {
 	public Cot readByte(Byte value) {
 		original = value;
 		test=value>>7==1;
-		negativeConfirm=(value&0x40)>>7==1;
+		negativeConfirm=(value&0x40)>>6==1;
 		not=value&0x3f;
 		return this;
 	}
