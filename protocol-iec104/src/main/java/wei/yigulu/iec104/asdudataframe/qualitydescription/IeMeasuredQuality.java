@@ -46,6 +46,15 @@ public class IeMeasuredQuality extends IeAbstractQuality {
 	}
 
 
+	/**
+	 * 是否是良好值
+	 *
+	 * @return boolean
+	 */
+	public boolean isGoodValue(){
+		return !isOverflow()&&super.isGoodValue();
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		return false;

@@ -84,7 +84,14 @@ public class IeAbstractQuality {
 		}
 		return v;
 	}
-
+	/**
+	 * 是否是良好值
+	 *
+	 * @return boolean
+	 */
+	public boolean isGoodValue(){
+		return !this.isBlocked()&&!isInvalid()&&!isSubstituted()&&!isNotTopical();
+	}
 
 	@Override
 	public String toString() {
