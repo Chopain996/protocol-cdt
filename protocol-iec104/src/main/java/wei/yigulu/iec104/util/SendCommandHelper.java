@@ -25,7 +25,6 @@ public class SendCommandHelper {
 
 	public static boolean sendShortCommand(AbstractMasterBuilder masterBuilder, Integer sourceAddress, Integer commonAddress, Integer dataAddress, Float value) throws Exception {
 		ShortFloatCommand command = new ShortFloatCommand(dataAddress, value);
-		System.out.println(command.toString());
 		Apdu apdu = new Apdu();
 		Asdu asdu = command.generateBack();
 		asdu.setCommonAddress(commonAddress);

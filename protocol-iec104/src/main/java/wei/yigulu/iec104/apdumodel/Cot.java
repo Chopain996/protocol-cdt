@@ -31,9 +31,6 @@ public class Cot {
 		test=(original&0xff)>>7==1;
 		negativeConfirm=(original&0x40)>>6==1;
 		not=value&0x3f;
-		System.out.println(test);
-		System.out.println(negativeConfirm);
-		System.out.println(not);
 		return this;
 	}
 
