@@ -1,6 +1,7 @@
 package wei.yigulu.utils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.util.ReferenceCountUtil;
 
 import java.util.Formatter;
@@ -55,10 +56,7 @@ public class DataConvertor {
 		if (!buf.isReadable()) {
 			return null;
 		}
-		ByteBuf b1 = buf.copy();
-		byte[] bs = new byte[b1.readableBytes()];
-		b1.readBytes(bs);
-		ReferenceCountUtil.release(b1);
+		byte[] bs=ByteBufUtil.getBytes(buf);
 		return Byte2String(bs);
 	}
 

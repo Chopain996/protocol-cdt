@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,6 +13,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wei.yigulu.utils.DataConvertor;
+
+import java.awt.image.DataBuffer;
 
 /**
  * 未继承netty的数据帧处理拆包类
@@ -64,13 +67,9 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	 * @return {@link ByteBuf}
 	 */
 	protected static ByteBuf expandCumulation(ByteBuf byteBuf1, ByteBuf byteBuf2) {
-		ByteBuf oldCumulation = byteBuf1;
-		byteBuf1 = byteBuf1.alloc().buffer(oldCumulation.readableBytes() + byteBuf2.readableBytes());
-		byteBuf1.writeBytes(oldCumulation);
+		byteBuf1.discardReadBytes();
+		byteBuf1.ensureWritable(byteBuf2.readableBytes());
 		byteBuf1.writeBytes(byteBuf2);
-		byteBuf1.readerIndex(0);
-		while (!oldCumulation.release()) {
-		}
 		while (!byteBuf2.release()) {
 		}
 		return byteBuf1;
@@ -151,6 +150,8 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 			while (!cumulation.release()) {
 			}
 			cumulation = null;
+			while (!byteBuf.release()) {
+			}
 			log.warn("报文超长舍弃");
 			return true;
 		} else {
