@@ -12,7 +12,7 @@ import wei.yigulu.iec104.exception.Iec104Exception;
 import java.util.List;
 
 /**
- * 对时帧的具体时标实体类
+ * 对时帧的具体时标实体类 cp56
  *
  * @author 修唯xiuwei
  * @version 3.0
@@ -39,11 +39,11 @@ public class IeProofreadTime {
 		byte[] btime = new byte[7];
 		is.readBytes(btime);
 		int milliSecond = (btime[0] & 0xff) + ((btime[1] & 0xff) << 8);
-		int minute = btime[2] & 0xff;
-		int hour = btime[3] & 0xff;
-		int day = btime[4] & 0xff;
-		int month = btime[5] & 0xff;
-		int year = btime[6] & 0xff;
+		int minute = btime[2] & 0x3f;
+		int hour = btime[3] & 0x1f;
+		int day = btime[4] & 0x1f;
+		int month = btime[5] & 0x0f;
+		int year = btime[6] & 0x7f;
 		String s = "20" + String.format("%02d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day) + " "
 				+ String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", milliSecond / 1000) + ":" +
 				String.format("%02d", milliSecond % 1000);
