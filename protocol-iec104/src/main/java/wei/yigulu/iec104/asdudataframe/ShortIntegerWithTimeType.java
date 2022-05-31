@@ -113,7 +113,7 @@ public class ShortIntegerWithTimeType extends AbstractDataFrameType {
 
 	@AllArgsConstructor
 	@Data
-	class ShortIntegerAndQualityWithTime {
+	public class ShortIntegerAndQualityWithTime {
 
 		Integer value;
 		IeMeasuredQuality quality;

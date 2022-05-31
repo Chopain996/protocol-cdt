@@ -110,7 +110,7 @@ public class NormalizedIntegerWithTimeType extends AbstractDataFrameType {
 
     @AllArgsConstructor
     @Data
-    class NormalizedIntegerAndQualityWithTime{
+   public  class NormalizedIntegerAndQualityWithTime{
 
         Integer value;
         IeMeasuredQuality quality;

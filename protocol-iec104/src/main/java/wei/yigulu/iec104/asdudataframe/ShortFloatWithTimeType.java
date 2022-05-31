@@ -109,7 +109,7 @@ public class ShortFloatWithTimeType extends AbstractDataFrameType {
 
     @AllArgsConstructor
     @Data
-    class ShortFloatAndQualityWithTime {
+   public class ShortFloatAndQualityWithTime {
 
         Float value;
         IeMeasuredQuality quality;
