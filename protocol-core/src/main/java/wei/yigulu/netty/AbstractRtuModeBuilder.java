@@ -35,6 +35,14 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	@Getter
 	@Setter
 	private int baudRate = 9600;
+
+
+	/**
+	 * 串口读取时间间隔  单位 ms
+	 */
+	@Getter
+	@Setter
+	private int readTimeOut = 1000;
 	/**
 	 * 数据位
 	 */
@@ -90,7 +98,9 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 			bootstrap.option(PureJavaCommChannelOption.DATA_BITS, dataBits);
 			bootstrap.option(PureJavaCommChannelOption.STOP_BITS, stopBits);
 			bootstrap.option(PureJavaCommChannelOption.PARITY_BIT, parity);
+			bootstrap.option(PureJavaCommChannelOption.READ_TIMEOUT, readTimeOut);
 		}
+
 		return this.bootstrap;
 	}
 
