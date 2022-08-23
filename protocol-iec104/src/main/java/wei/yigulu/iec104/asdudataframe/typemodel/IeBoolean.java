@@ -2,9 +2,7 @@ package wei.yigulu.iec104.asdudataframe.typemodel;
 
 
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import wei.yigulu.iec104.asdudataframe.qualitydescription.IeAbstractQuality;
 import wei.yigulu.iec104.exception.Iec104Exception;
 
@@ -17,7 +15,8 @@ import wei.yigulu.iec104.exception.Iec104Exception;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class IeBoolean extends IeAbstractQuality implements IecDataInterface {
 
 	public static final int OCCUPYBYTES = 1;
@@ -44,6 +43,11 @@ public class IeBoolean extends IeAbstractQuality implements IecDataInterface {
 			v |= 0x01;
 		}
 		return v;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return false;
 	}
 
 

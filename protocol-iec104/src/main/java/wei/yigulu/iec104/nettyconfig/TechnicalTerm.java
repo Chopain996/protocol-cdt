@@ -132,6 +132,12 @@ public class TechnicalTerm {
 
 
 	/**
+	 * 电度总召唤
+	 */
+	public static final Integer PULSE_TOTAL_SUMMONTYPE_TYPE = 0x65;
+
+
+	/**
 	 * 设置短浮点命令
 	 */
 	public static final Integer SHORT_FLOAT_COMMAND_TYPE = 0x32;

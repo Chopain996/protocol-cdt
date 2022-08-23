@@ -25,7 +25,7 @@ public class IeProofreadTime {
 
 	private DateTime time = new DateTime();
 
-	private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
+	private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/**
 	 * Ie proofread time
@@ -44,8 +44,8 @@ public class IeProofreadTime {
 		int day = btime[4] & 0x1f;
 		int month = btime[5] & 0x0f;
 		int year = btime[6] & 0x7f;
-		String s = "20" + String.format("%02d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day) + " "
-				+ String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", milliSecond / 1000) + ":" +
+		String s = (year>=70?"19":"20") + String.format("%02d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day) + " "
+				+ String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", milliSecond / 1000) + "." +
 				String.format("%02d", milliSecond % 1000);
 		time = FORMATTER.parseDateTime(s);
 	}
