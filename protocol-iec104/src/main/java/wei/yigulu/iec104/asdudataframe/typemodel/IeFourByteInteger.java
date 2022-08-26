@@ -17,11 +17,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IeFourByteInteger implements IecDataInterface {
+public class IeFourByteInteger implements IecDataInterface{
 
-	public static final int OCCUPYBYTES = 4;
+	public static final int  OCCUPYBYTES=4;
 
-	private Integer value;
+	private Long value;
 
 	/**
 	 * Ie four bit integer
@@ -32,7 +32,7 @@ public class IeFourByteInteger implements IecDataInterface {
 		if(is.readableBytes()<OCCUPYBYTES){
 			throw new Iec104Exception(3301,"可用字节不足，不能进行读取");
 		}
-		value = ((is.readByte() & 0xff) | ((is.readByte() & 0xff) << 8) | ((is.readByte() & 0xff) << 16) | ((is.readByte() & 0xff) << 24));
+		value =(((long)is.readByte() & 0xff)|((long)(is.readByte() & 0xff) << 8) | ((long)(is.readByte() & 0xff) << 16) |  ((long)(is.readByte() & 0xff) << 24) );
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class IeFourByteInteger implements IecDataInterface {
 	 * @param buffer buffer
 	 */
 	public void encode(List<Byte> buffer) {
-		int tempVal = value & 0xff;
+		long tempVal = value & 0xffff;
 		buffer.add((byte) tempVal);
 		buffer.add((byte) (tempVal >> 8));
 		buffer.add((byte) (tempVal >> 16));
@@ -49,7 +49,13 @@ public class IeFourByteInteger implements IecDataInterface {
 	}
 
 	@Override
-	public Integer getIecValue() {
+	public String toString() {
+			return "长整型数值: " + value;
+
+	}
+
+	@Override
+	public Object getIecValue() {
 		return this.value;
 	}
 }

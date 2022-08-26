@@ -107,6 +107,13 @@ public class TechnicalTerm {
 	 * 测量值，短浮点数
 	 */
 	public static final Integer SHORT_FLOAT_TYPE = 13;
+
+
+
+	/**
+	 * 电能累计值
+	 */
+	public static final Integer CUMULATIVE_ELECTRIC_ENERGY_MEASUREMENT = 15;
 	/**
 	 * 测量值，标度化值 带时标
 	 */
