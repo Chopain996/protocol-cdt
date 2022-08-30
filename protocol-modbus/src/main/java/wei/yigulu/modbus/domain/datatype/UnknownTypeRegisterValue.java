@@ -19,6 +19,19 @@ public class UnknownTypeRegisterValue extends RegisterValue {
 
 	Register  register=new Register();
 
+	{
+		super.modbusDataTypeEnum = ModbusDataTypeEnum.UNKNOW;
+	}
+
+
+	public byte getB1(){
+		return register.getB1();
+	}
+
+	public byte getB2(){
+		return register.getB2();
+	}
+
 	@Override
 	public List<Register> getRegisters() {
 		List<Register> l=new ArrayList<>();
@@ -28,7 +41,7 @@ public class UnknownTypeRegisterValue extends RegisterValue {
 
 	@Override
 	public UnknownTypeRegisterValue decode(byte[] bytes, int offset) {
-		this.register=new Register(bytes[offset],bytes[offset+1]);
+		this.register=new Register(bytes[offset*2],bytes[offset*2+1]);
 		return this;
 	}
 
