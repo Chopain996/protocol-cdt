@@ -104,9 +104,6 @@ public class ModbusSlaveDataContainer {
 					this.registers.addAll(new P_AB(BigDecimal.ZERO).getRegisters());
 				}
 			}
-			for (int i = 0; i < value.getModbusDataTypeEnum().getOccupiedRegister(); i++) {
-				this.registers.remove(position);
-			}
 			this.registers.addAll(position, value.getRegisters());
 		}
 

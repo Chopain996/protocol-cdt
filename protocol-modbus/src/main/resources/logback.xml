@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property name="APP_Name" value="test"/>
+    <property name="Log_Dir" value="./"/>
+    <contextName>${APP_Name}</contextName>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>${APP_Name}-%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="InfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${Log_Dir}/${APP_Name}/logs/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${Log_Dir}/logs/${APP_Name}/%d{yyyy-MM-dd}/info.%i.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!--<appender name="SocketError" class="com.hrhx.logger.SocketAppend"></appender>-->
+
+
+    <!--子节点<root>:它也是<loger>元素，但是它是根loger,是所有<loger>的上级。
+    只有一个level属性，因为name已经被命名为"root",且已经是最上级了。
+　　level: 用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL和OFF，
+    不能设置为INHERITED或者同义词NULL。 默认是DEBUG。-->
+    <root level="trace">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="InfoFile"/>
+        <!--<appender-ref ref="SocketE-->
+    </root>
+
+</configuration>

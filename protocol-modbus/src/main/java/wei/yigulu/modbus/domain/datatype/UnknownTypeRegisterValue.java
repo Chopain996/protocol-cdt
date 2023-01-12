@@ -51,7 +51,6 @@ public class UnknownTypeRegisterValue extends RegisterValue {
 		return this;
 	}
 
-	@Override
 	public UnknownTypeRegisterValue encode(List<Byte> bytes) {
 		bytes.add(this.register.getB1());
 		bytes.add(this.register.getB2());

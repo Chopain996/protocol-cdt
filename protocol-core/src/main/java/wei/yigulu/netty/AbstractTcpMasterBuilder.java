@@ -127,6 +127,7 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 					.handler(getOrCreateChannelInitializer());
 			bootstrap.option(ChannelOption.SO_KEEPALIVE, false);
 			bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
+			bootstrap.option(ChannelOption.SO_LINGER, 0);
 		}
 		return this.bootstrap;
 	}

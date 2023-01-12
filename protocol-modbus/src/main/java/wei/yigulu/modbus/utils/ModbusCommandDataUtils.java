@@ -53,7 +53,7 @@ public class ModbusCommandDataUtils {
 				modbusCommand.setSlaveId(slaveId).setRegisters(address, values);
 				modbusCommand.encode(bs);
 				masterBuilder.sendFrameToOpposite(Bytes.toArray(bs));
-				buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(0);
+				buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(modbusCommand.getFunctionCode().getCode());
 				confirm = new RtuModbusConfirm().decode(buffer);
 			} else {
 				modbusCommand = new TcpModbusCommand();
@@ -110,7 +110,7 @@ public class ModbusCommandDataUtils {
 				modbusCommand.setSlaveId(slaveId).setCoils(address, values);
 				modbusCommand.encode(bs);
 				masterBuilder.sendFrameToOpposite(Bytes.toArray(bs));
-				buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(0);
+				buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(modbusCommand.getFunctionCode().getCode());
 				confirm = new RtuModbusConfirm().decode(buffer);
 			} else {
 				modbusCommand = new TcpModbusCommand();

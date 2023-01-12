@@ -198,7 +198,7 @@ public class ModbusRequestDataUtils {
 		if (modbusRequest instanceof TcpModbusRequest) {
 			buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(((TcpModbusRequest) modbusRequest).getTcpExtraCode().getTransactionIdentifier().getSeq());
 		} else {
-			buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(0);
+			buffer = ((ModbusMasterBuilderInterface) masterBuilder).getOrCreateSynchronousWaitingRoom().getData(modbusRequest.getFunctionCode().getCode());
 		}
 		if (buffer == null) {
 			throw new ModbusException("Slave端响应超时");
