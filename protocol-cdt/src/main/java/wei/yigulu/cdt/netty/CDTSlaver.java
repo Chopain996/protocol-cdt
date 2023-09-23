@@ -2,6 +2,7 @@ package wei.yigulu.cdt.netty;
 
 import lombok.Getter;
 import wei.yigulu.cdt.cdtframe.AbstractCDTDataTransmitter;
+import wei.yigulu.jsc.JSerialCommChannel;
 import wei.yigulu.netty.AbstractRtuModeBuilder;
 import wei.yigulu.netty.ProtocolChannelInitializer;
 import wei.yigulu.purejavacomm.PureJavaCommChannel;
@@ -26,10 +27,10 @@ public class CDTSlaver extends AbstractRtuModeBuilder {
 
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
-		return new ProtocolChannelInitializer<PureJavaCommChannel>(this) {
+		return new ProtocolChannelInitializer<JSerialCommChannel>(this) {
 
 			@Override
-			protected void initChannel(PureJavaCommChannel ch) throws Exception {
+			protected void initChannel(JSerialCommChannel ch) throws Exception {
 				ch.pipeline().addLast(new SlaverHandler((CDTSlaver) builder));
 			}
 		};

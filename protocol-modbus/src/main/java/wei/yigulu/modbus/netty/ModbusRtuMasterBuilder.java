@@ -2,6 +2,7 @@ package wei.yigulu.modbus.netty;
 
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import wei.yigulu.jsc.JSerialCommChannel;
 import wei.yigulu.modbus.domain.synchronouswaitingroom.RtuSynchronousWaitingRoom;
 import wei.yigulu.modbus.domain.synchronouswaitingroom.SynchronousWaitingRoom;
 import wei.yigulu.modbus.exceptiom.ModbusException;
@@ -38,9 +39,9 @@ public class ModbusRtuMasterBuilder extends AbstractRtuModeBuilder implements Mo
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		if (this.channelInitializer == null) {
-			this.channelInitializer = new ProtocolChannelInitializer<PureJavaCommChannel>(this) {
+			this.channelInitializer = new ProtocolChannelInitializer<JSerialCommChannel>(this) {
 				@Override
-				protected void initChannel(PureJavaCommChannel ch) throws Exception {
+				protected void initChannel(JSerialCommChannel ch) throws Exception {
 					ch.pipeline().addLast(new ModbusRtuMasterDelimiterHandler().setLog(getLog()));
 					ch.pipeline().addLast(new ModbusRtuMasterHandler((ModbusRtuMasterBuilder) builder));
 				}

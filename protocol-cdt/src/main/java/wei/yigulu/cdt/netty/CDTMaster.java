@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import lombok.Getter;
 import wei.yigulu.cdt.cdtframe.AbstractCDTDataHandler;
+import wei.yigulu.jsc.JSerialCommChannel;
 import wei.yigulu.netty.AbstractRtuModeBuilder;
 import wei.yigulu.netty.ProtocolChannelInitializer;
 import wei.yigulu.purejavacomm.PureJavaCommChannel;
@@ -32,9 +33,9 @@ public class CDTMaster extends AbstractRtuModeBuilder {
 
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
-		return new ProtocolChannelInitializer<PureJavaCommChannel>(this) {
+		return new ProtocolChannelInitializer<JSerialCommChannel>(this) {
 			@Override
-			protected void initChannel(PureJavaCommChannel ch) throws Exception {
+			protected void initChannel(JSerialCommChannel ch) throws Exception {
 				ch.pipeline().addLast(new DelimiterBasedFrameDecoder(MAXLEN, Unpooled.copiedBuffer(HEAD)));
 				ch.pipeline().addLast(new MasterHandler((CDTMaster) builder));
 			}

@@ -3,6 +3,7 @@ package wei.yigulu.modbus.netty;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import wei.yigulu.jsc.JSerialCommChannel;
 import wei.yigulu.modbus.domain.ModbusSlaveDataContainer;
 import wei.yigulu.modbus.domain.command.AbstractModbusCommand;
 import wei.yigulu.netty.AbstractRtuModeBuilder;
@@ -34,9 +35,9 @@ public class ModbusRtuSlaverBuilder extends AbstractRtuModeBuilder implements Mo
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		if (this.channelInitializer == null) {
-			this.channelInitializer = new ProtocolChannelInitializer<PureJavaCommChannel>(this) {
+			this.channelInitializer = new ProtocolChannelInitializer<JSerialCommChannel>(this) {
 				@Override
-				protected void initChannel(PureJavaCommChannel ch) throws Exception {
+				protected void initChannel(JSerialCommChannel ch) throws Exception {
 					ch.pipeline().addLast(new ModbusRtuSlaverDelimiterHandler().setLog(getLog()));
 					ch.pipeline().addLast(new ModbusRtuSlaverHandler((ModbusRtuSlaverBuilder) builder));
 				}

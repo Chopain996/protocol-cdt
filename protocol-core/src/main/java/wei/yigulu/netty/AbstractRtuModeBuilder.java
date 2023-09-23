@@ -7,10 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import wei.yigulu.purejavacomm.PureJavaCommChannel;
-import wei.yigulu.purejavacomm.PureJavaCommChannelConfig;
-import wei.yigulu.purejavacomm.PureJavaCommChannelOption;
-import wei.yigulu.purejavacomm.PureJavaCommDeviceAddress;
+import wei.yigulu.jsc.JSerialCommChannel;
+import wei.yigulu.jsc.JSerialCommChannelConfig;
+import wei.yigulu.jsc.JSerialCommChannelOption;
+import wei.yigulu.jsc.JSerialCommDeviceAddress;
+
 
 /**
  * 使用rtu的客户端
@@ -48,19 +49,19 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	 */
 	@Getter
 	@Setter
-	private PureJavaCommChannelConfig.Databits dataBits = PureJavaCommChannelConfig.Databits.DATABITS_8;
+	private JSerialCommChannelConfig.Databits dataBits = JSerialCommChannelConfig.Databits.DATABITS_8;
 	/**
 	 * 停止位
 	 */
 	@Getter
 	@Setter
-	private PureJavaCommChannelConfig.Stopbits stopBits = PureJavaCommChannelConfig.Stopbits.STOPBITS_1;
+	private JSerialCommChannelConfig.Stopbits stopBits = JSerialCommChannelConfig.Stopbits.STOPBITS_1;
 	/**
 	 * 校验位
 	 */
 	@Getter
 	@Setter
-	private PureJavaCommChannelConfig.Paritybit parity = PureJavaCommChannelConfig.Paritybit.NONE;
+	private JSerialCommChannelConfig.Paritybit parity = JSerialCommChannelConfig.Paritybit.NONE;
 
 
 	public AbstractRtuModeBuilder(String commPortId) {
@@ -71,7 +72,7 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	@Override
 	public void create() {
 		try {
-			this.future = getOrCreateBootstrap().connect(new PureJavaCommDeviceAddress(this.commPortId));
+			this.future = getOrCreateBootstrap().connect(new JSerialCommDeviceAddress(this.commPortId));
 			future.addListener(getOrCreateConnectionListener());
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
@@ -92,13 +93,13 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 		if (this.bootstrap == null) {
 			this.bootstrap = new Bootstrap();
 			bootstrap.group(getOrCreateWorkGroup());
-			bootstrap.channel(PureJavaCommChannel.class);
+			bootstrap.channel(JSerialCommChannel.class);
 			bootstrap.handler(getOrCreateChannelInitializer());
-			bootstrap.option(PureJavaCommChannelOption.BAUD_RATE, baudRate);
-			bootstrap.option(PureJavaCommChannelOption.DATA_BITS, dataBits);
-			bootstrap.option(PureJavaCommChannelOption.STOP_BITS, stopBits);
-			bootstrap.option(PureJavaCommChannelOption.PARITY_BIT, parity);
-			bootstrap.option(PureJavaCommChannelOption.READ_TIMEOUT, readTimeOut);
+			bootstrap.option(JSerialCommChannelOption.BAUD_RATE, baudRate);
+			bootstrap.option(JSerialCommChannelOption.DATA_BITS, dataBits);
+			bootstrap.option(JSerialCommChannelOption.STOP_BITS, stopBits);
+			bootstrap.option(JSerialCommChannelOption.PARITY_BIT, parity);
+			bootstrap.option(JSerialCommChannelOption.READ_TIMEOUT, readTimeOut);
 		}
 
 		return this.bootstrap;
