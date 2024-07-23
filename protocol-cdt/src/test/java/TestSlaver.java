@@ -11,7 +11,7 @@ public class TestSlaver {
 
 	public static void main(String[] args) throws InterruptedException {
 		new Thread(() -> {
-			new CDTSlaver("COM2", new LocalCDTDataTransmitter()).create();
+			new CDTSlaver("COM3", new LocalCDTDataTransmitter()).create();
 		}).start();
        /*for (;;){
            System.out.println(DataContainer.getInstance().toString());

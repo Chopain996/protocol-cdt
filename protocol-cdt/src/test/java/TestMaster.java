@@ -8,11 +8,11 @@ import wei.yigulu.cdt.netty.CDTMaster;
 public class TestMaster {
 	public static void main(String[] args) throws InterruptedException {
 		new Thread(() -> {
-			new CDTMaster("COM1", new LocalCDTDataHandler()).create();
+			new CDTMaster("COM2", new LocalCDTDataHandler()).create();
 		}).start();
-       /*for (;;){
-           System.out.println(DataContainer.getInstance().toString());
-           Thread.sleep(3000);
-       }*/
+//       for (;;){
+//           System.out.println(DataContainer.getInstance().toString());
+//           Thread.sleep(3000);
+//       }
 	}
 }

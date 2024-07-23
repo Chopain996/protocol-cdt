@@ -16,16 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>wei.yigulu</groupId>
-            <artifactId>protocol-iec104</artifactId>
-            <version>${iec104.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>wei.yigulu</groupId>
-            <artifactId>protocol-modbus</artifactId>
-            <version>${modbus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>wei.yigulu</groupId>
             <artifactId>protocol-cdt</artifactId>
             <version>${cdt.version}</version>
         </dependency>

@@ -11,7 +11,8 @@ public enum CDTType {
 	IMPORTANTYC("重要遥测", 0x61, IntegerDataType.class),
 	SECONDYC("次要遥测", 0xc2, IntegerDataType.class),
 	COMMONYC("一般遥测", 0xb3, IntegerDataType.class),
-	YX("遥信状态", 0xf4, BooleanDataType.class);
+	YX("遥信状态", 0xf4, BooleanDataType.class),
+	YM("遥脉",0x85,IntegerDataType.class);
 
 	String name;
 	int no;
@@ -33,6 +34,8 @@ public enum CDTType {
 				return COMMONYC;
 			case 0xf4:
 				return YX;
+			case 0x85:
+				return YM;
 			default:
 				return null;
 		}

@@ -92,8 +92,11 @@ public class CDTFrameBean {
 		if (this.cdtType == null) {
 			return;
 		}
+		//信息字数
 		this.num = Math.abs(bs[2]);
+		//源站地址
 		this.sourceAddress = bs[3];
+		//目的站址
 		this.destinationAddress = bs[4];
 		BaseDateType dateType;
 		this.dates = new ArrayList<>(this.num);

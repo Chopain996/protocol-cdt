@@ -26,6 +26,9 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	@Getter
 	private Map<Integer, QualityDescription> qualityDescriptionMap;
 
+	@Getter
+	private Map<Integer, YMQualityDescription> YMqualityDescriptionMap;
+
 
 	/**
 	 * 整数数据类型
@@ -68,6 +71,11 @@ public class IntegerDataType extends BaseDateType<Integer> {
 			this.qualityDescriptionMap.put(super.getFunctionNum() * 2, new QualityDescription(bs[1]));
 			this.dates.put(super.getFunctionNum() * 2 + 1, decode2Int(bs[2], bs[3]));
 			this.qualityDescriptionMap.put(super.getFunctionNum() * 2 + 1, new QualityDescription(bs[3]));
+		}else if(getFunctionNum() <= 0xdf&& getFunctionNum() >= 0xa0) {
+			this.dates = new HashMap<>(1);
+			this.YMqualityDescriptionMap = new HashMap<>(1);
+			this.dates.put(super.getFunctionNum(), decode2Int(bs[0], bs[1],bs[2],bs[3]));
+			this.YMqualityDescriptionMap.put(super.getFunctionNum(), new YMQualityDescription(bs[3]));
 		}
 	}
 
@@ -85,6 +93,34 @@ public class IntegerDataType extends BaseDateType<Integer> {
 		}
 		return i;
 	}
+	/**
+	 * 遥脉转化成CDT的int型
+	 * @param b1
+	 * @param b2
+	 * @param b3
+	 * @param b4
+	 * @return
+	 */
+	private Integer decode2Int(Byte b1, Byte b2, Byte b3, Byte b4) {
+		// 检查b4的第3位 (bit 6)
+		boolean isSpecialEncoding = (b4 & 0x40) != 0;
+		if (!isSpecialEncoding) {
+			// BCD编码处理
+			// 假设只处理b1, b2, b3各表示一个BCD数字 (最简单的形式)
+			int digit1 = (b1 & 0xFF);
+			int digit2 = (b2 & 0xFF) << 8;
+			int digit3 = (b3 & 0xFF) << 16;
+			return digit1 + digit2 + digit3;
+		} else {
+			// 特殊编码处理，类似于decode2Int(Byte b1, Byte b2) 但基于b1, b2, b3
+			int i = (b1 & 0xff) | (b2 & 0x07) << 8 | (b3 & 0x01) << 11;
+			if ((b3 >> 1 & 0x01) == 1) {
+				i = (2048 - i) * -1;
+			}
+			return i;
+		}
+	}
+
 
 
 	@Override
@@ -136,13 +172,47 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	public String toString() {
 		String s = "";
 		if (this.dates != null) {
-			for (Integer i : this.getDates().keySet()) {
-				s += "遥测点位：" + i + ";值：" + this.getDates().get(i) + " " + getQualityDescriptionMap().get(i) + "\n";
+			if(this.getFunctionNum() <= 0xdf&& this.getFunctionNum() >= 0xa0){
+				for (Integer i : this.getDates().keySet()) {
+					s += "第" + i + "路脉冲;值：" + this.getDates().get(i) + " " + getYMqualityDescriptionMap().get(i) + "\n";
+				}
+			}else {
+				for (Integer i : this.getDates().keySet()) {
+					s += "遥测点位：" + i + ";值：" + this.getDates().get(i) + " " + getQualityDescriptionMap().get(i) + "\n";
+				}
 			}
+
 		}
 		return s;
 	}
 
+
+	@Data
+	class YMQualityDescription {
+		/**
+		 * 是否溢出 false 即为不溢出
+		 */
+		Boolean uesbcd = false;
+		/**
+		 * 是否无效 false 即为有效
+		 */
+		Boolean invalid = false;
+
+		public YMQualityDescription(Byte b) {
+			if ((b >> 5 & 0x01) == 1) {
+				this.uesbcd = true;
+			}
+			if ((b >> 7 & 0x01) == 1) {
+				this.invalid = true;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return (uesbcd ? "BCD表示" : "") + " " + (invalid ? "无效" : "有效");
+		}
+
+	}
 
 	@Data
 	class QualityDescription {

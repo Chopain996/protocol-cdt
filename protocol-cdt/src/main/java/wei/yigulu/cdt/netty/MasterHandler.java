@@ -66,6 +66,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		log.error("串口异常消息:", cause.getMessage());
 	}
 
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
 		log.info("接收到串口{}发来数据帧:" + DataConvertor.ByteBuf2String(msg), this.cdtMaster.getCommPortId());
@@ -73,6 +74,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
 			log.info(cdtFrameBean.toString());
 			this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
+			log.info(cdtFrameBean.toString());
 		}
 	}
 }
