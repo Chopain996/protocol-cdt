@@ -3,6 +3,7 @@ package wei.yigulu.cdt.netty;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.Getter;
 import wei.yigulu.cdt.cdtframe.AbstractCDTDataHandler;
 import wei.yigulu.jsc.JSerialCommChannel;
