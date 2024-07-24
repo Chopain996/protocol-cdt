@@ -2,6 +2,7 @@ package wei.yigulu.cdt.netty;
 
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,6 +26,8 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	private Logger log;
 	private CDTMaster cdtMaster;
 
+	private final byte[] HEAD = new byte[]{(byte) 0xEB, (byte) 0x90, (byte) 0xEB, (byte) 0x90, (byte) 0xEB, (byte) 0x90};
+
 	public MasterHandler(CDTMaster cdtMaster) {
 		this.cdtMaster = cdtMaster;
 		this.log = cdtMaster.getLog();
@@ -35,6 +38,8 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		log.info("-----连接串口{}成功-----", this.cdtMaster.getCommPortId());
 		this.cdtMaster.getDataHandler().connected();
 	}
+
+
 
 	/**
 	 * channel断连及不稳定时调用的方法
@@ -69,12 +74,15 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+
 		log.info("接收到串口{}发来数据帧:" + DataConvertor.ByteBuf2String(msg), this.cdtMaster.getCommPortId());
+
 		if (msg.readableBytes() > MINLEN) {
 			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
-			log.info(cdtFrameBean.toString());
 			this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
 			log.info(cdtFrameBean.toString());
 		}
 	}
+
+
 }

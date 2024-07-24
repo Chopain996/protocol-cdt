@@ -1,3 +1,5 @@
+package wei.yigulu;
+
 import wei.yigulu.cdt.cdtframe.*;
 
 import java.util.ArrayList;

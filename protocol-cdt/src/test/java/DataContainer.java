@@ -25,12 +25,17 @@ public class DataContainer {
 
 	private volatile Map<Integer, Boolean> yxData = new ConcurrentHashMap<>();
 
+	private volatile Map<Integer, Integer> ymData = new ConcurrentHashMap<>();
+
 	public void putYc(int address, float f) {
 		this.ycData.put(address, f);
 	}
 
 	public void putYx(int address, boolean b) {
 		this.yxData.put(address, b);
+	}
+	public void putYM(int address, Integer b) {
+		this.ymData.put(address, b);
 	}
 
 	public Map<Integer, Float> getYc() {

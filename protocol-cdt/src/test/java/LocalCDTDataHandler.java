@@ -35,6 +35,12 @@ public class LocalCDTDataHandler extends AbstractCDTDataHandler {
 		}
 	}
 
+	@Override
+	protected void processYM(List<BaseDateType> dates) {
+		for (BaseDateType dateType : dates) {
+			dateType.getDates().forEach((k, v) -> dataContainer.putYM((Integer) k, (Integer) v));
+		}
+	}
 
 	private void saveYc(List<BaseDateType> dates) {
 		for (BaseDateType dateType : dates) {

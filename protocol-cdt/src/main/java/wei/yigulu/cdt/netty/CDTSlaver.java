@@ -19,8 +19,8 @@ public class CDTSlaver extends AbstractRtuModeBuilder {
 	@Getter
 	private final AbstractCDTDataTransmitter dataTransmitter;
 
-	public CDTSlaver(String commPortId, AbstractCDTDataTransmitter dataTransmitter) {
-		super(commPortId);
+	public CDTSlaver(String commPortId, int baudRate,AbstractCDTDataTransmitter dataTransmitter) {
+		super(commPortId,baudRate);
 		this.dataTransmitter = dataTransmitter;
 	}
 

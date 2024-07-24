@@ -57,6 +57,9 @@ public class DataConvertor {
 			return null;
 		}
 		byte[] bs=ByteBufUtil.getBytes(buf);
+		if (bs.length == 0) {
+			bs=ByteBufUtil.getBytes(buf);
+		}
 		return Byte2String(bs);
 	}
 

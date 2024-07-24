@@ -37,7 +37,6 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	@Setter
 	private int baudRate = 9600;
 
-
 	/**
 	 * 串口读取时间间隔  单位 ms
 	 */
@@ -64,8 +63,9 @@ public abstract class AbstractRtuModeBuilder extends AbstractMasterBuilder {
 	private JSerialCommChannelConfig.Paritybit parity = JSerialCommChannelConfig.Paritybit.NONE;
 
 
-	public AbstractRtuModeBuilder(String commPortId) {
+	public AbstractRtuModeBuilder(String commPortId,int baudRate ) {
 		this.commPortId = commPortId;
+		this.baudRate = baudRate;
 	}
 
 

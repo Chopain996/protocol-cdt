@@ -21,13 +21,13 @@ public class CDTMaster extends AbstractRtuModeBuilder {
 
 	private static final int MAXLEN = 10240;
 
-	private final byte[] HEAD = new byte[]{(byte) 0xEB, (byte) 0x90, (byte) 0xEB, (byte) 0x90, (byte) 0xEB, (byte) 0x90};
+
 
 	@Getter
 	private final AbstractCDTDataHandler dataHandler;
 
-	public CDTMaster(String commPortId, AbstractCDTDataHandler dataHandler) {
-		super(commPortId);
+	public CDTMaster(String commPortId,int baudRate, AbstractCDTDataHandler dataHandler) {
+		super(commPortId,baudRate);
 		this.dataHandler = dataHandler;
 	}
 
@@ -35,9 +35,12 @@ public class CDTMaster extends AbstractRtuModeBuilder {
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		return new ProtocolChannelInitializer<JSerialCommChannel>(this) {
+			AllCustomDelimiterHandler myhandler=new AllCustomDelimiterHandler();
+
 			@Override
 			protected void initChannel(JSerialCommChannel ch) throws Exception {
-				ch.pipeline().addLast(new DelimiterBasedFrameDecoder(MAXLEN, Unpooled.copiedBuffer(HEAD)));
+				//ch.pipeline().addLast(new DelimiterBasedFrameDecoder(MAXLEN, Unpooled.copiedBuffer(HEAD)));
+				ch.pipeline().addLast(myhandler);
 				ch.pipeline().addLast(new MasterHandler((CDTMaster) builder));
 			}
 		};

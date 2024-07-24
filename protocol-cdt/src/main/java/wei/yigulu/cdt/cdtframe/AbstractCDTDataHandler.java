@@ -42,6 +42,9 @@ public abstract class AbstractCDTDataHandler {
 			case YX:
 				processYx(dates);
 				break;
+			case YM:
+				processYM(dates);
+				break;
 			default:
 		}
 	}
@@ -74,6 +77,7 @@ public abstract class AbstractCDTDataHandler {
 	 */
 	protected abstract void processYx(List<BaseDateType> dates);
 
+	protected abstract void processYM(List<BaseDateType> dates);
 
 	public void connected() {
 

@@ -30,6 +30,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	private Map<Integer, YMQualityDescription> YMqualityDescriptionMap;
 
 
+
 	/**
 	 * 整数数据类型
 	 * 构造方法  map中的数据必须是2个以内 且必须是连续的  不足2个   其他位皆视为 false
@@ -40,7 +41,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	 * @param qualities 品质
 	 */
 
-	public IntegerDataType(Map<Integer, Integer> dates, Map<Integer, QualityDescription> qualities) {
+	public IntegerDataType(Map<Integer, Integer> dates, Map<Integer,? extends Description> qualities) {
 		if (dates.size() == 0) {
 			throw new RuntimeException("数据个数不能为0");
 		}
@@ -56,7 +57,39 @@ public class IntegerDataType extends BaseDateType<Integer> {
 		}
 
 		this.dates = dates;
-		this.qualityDescriptionMap = qualities == null ? new HashMap<>() : qualities;
+//		if (getFunctionNum() <= 0x7f) {
+//			this.qualityDescriptionMap = qualities == null ? new HashMap<>() : qualities;
+//		}else if(getFunctionNum() <= 0xdf&& getFunctionNum() >= 0xa0) {
+//			this.YMqualityDescriptionMap = qualities == null ? new HashMap<>() : qualities;
+//		}
+		if (getFunctionNum() <= 0x7f) {
+			if(qualities != null) {
+				this.qualityDescriptionMap = new HashMap<>();
+				qualities.forEach((key, value) -> {
+					if (value instanceof QualityDescription) {
+						this.qualityDescriptionMap.put(key, (QualityDescription) value);
+					} else {
+						throw new IllegalArgumentException("Quality map contains an incorrect type");
+					}
+				});
+			} else {
+				this.qualityDescriptionMap = new HashMap<>();
+			}
+		} else if (getFunctionNum() <= 0xdf && getFunctionNum() >= 0xa0) {
+			if(qualities != null) {
+				this.YMqualityDescriptionMap = new HashMap<>();
+				qualities.forEach((key, value) -> {
+					if (value instanceof YMQualityDescription) {
+						this.YMqualityDescriptionMap.put(key, (YMQualityDescription) value);
+					} else {
+						throw new IllegalArgumentException("Quality map contains an incorrect type");
+					}
+				});
+			} else {
+				this.YMqualityDescriptionMap = new HashMap<>();
+			}
+		}
+
 	}
 
 
@@ -188,7 +221,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 
 
 	@Data
-	class YMQualityDescription {
+	class YMQualityDescription extends Description {
 		/**
 		 * 是否溢出 false 即为不溢出
 		 */
@@ -215,7 +248,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	}
 
 	@Data
-	class QualityDescription {
+	class QualityDescription extends Description {
 		/**
 		 * 是否溢出 false 即为不溢出
 		 */
