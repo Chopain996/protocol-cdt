@@ -5,13 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
 import wei.yigulu.utils.CrcUtils;
-import wei.yigulu.utils.JsonBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.*;
-
 
 /**
  * 遥测数据
@@ -19,7 +16,7 @@ import java.util.*;
  * @author 修唯xiuwei
  **/
 @NoArgsConstructor
-public class IntegerDataType extends BaseDateType<Integer> {
+public class TimerDataType extends BaseDateType<Integer> {
 
 	/**
 	 * 质量位描述的map
@@ -30,7 +27,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	@Getter
 	private Map<Integer, YMQualityDescription> YMqualityDescriptionMap;
 
-	private Logger log;
+
 
 
 
@@ -44,7 +41,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 	 * @param qualities 品质
 	 */
 
-	public IntegerDataType(Map<Integer, Integer> dates, Map<Integer,? extends Description> qualities) {
+	public TimerDataType(Map<Integer, Integer> dates, Map<Integer,? extends Description> qualities) {
 		if (dates.size() == 0) {
 			throw new RuntimeException("数据个数不能为0");
 		}
@@ -116,7 +113,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 
 
 	@Override
-	public void readDates(byte[] bs) throws InstantiationException, IllegalAccessException {
+	public void readDates(byte[] bs) {
 		//功能码处于00H-7FH之间的是遥测  86H-89H是总加遥测 忽略总加遥测
 		//遥测二进制  b14位为1代表溢出,b15位为1 代表无效  有效数据位 为 b0-b10  b11为1时代表负数  以2的补码表述
 		if (getFunctionNum() <= 0x7f) {
@@ -131,24 +128,7 @@ public class IntegerDataType extends BaseDateType<Integer> {
 			this.YMqualityDescriptionMap = new HashMap<>(1);
 			this.dates.put(super.getFunctionNum(), decode2Int(bs[0], bs[1],bs[2],bs[3]));
 			this.YMqualityDescriptionMap.put(super.getFunctionNum(), new YMQualityDescription(bs[3]));
-		}else if(getFunctionNum() >= 0xf0 && getFunctionNum() <= 0xff) {
-			this.dates = new HashMap<>(32);
-			System.out.println("===================出现变位遥信=======================");
-			BaseDateType dateType = (BooleanDataType) CDTType.YX.typeClass.newInstance();
-			dateType.readYBDates(bs,this.getFunctionNum());
-			Map dates1 = dateType.getDates();
-			this.dates = dates1;
 		}
-	}
-
-	@Override
-	public Map getYBDataJson() {
-		HashMap<String, Integer> dataMap = new HashMap<>();
-		for (Integer i : this.dates.keySet()) {
-			dataMap.put(String.valueOf(i), this.dates.get(i));
-		}
-
-		return dataMap;
 	}
 
 	/**
@@ -242,20 +222,15 @@ public class IntegerDataType extends BaseDateType<Integer> {
 
 	@Override
 	public String toString() {
-
 		String s = "";
 		if (this.dates != null) {
 			if(this.getFunctionNum() <= 0xdf&& this.getFunctionNum() >= 0xa0){
 				for (Integer i : this.getDates().keySet()) {
 					s += "第" + i + "路脉冲;值：" + this.getDates().get(i) + " " + getYMqualityDescriptionMap().get(i) + "\n";
 				}
-			}else if(getFunctionNum() <= 0x7f){
+			}else {
 				for (Integer i : this.getDates().keySet()) {
 					s += "遥测点位：" + i + ";值：" + this.getDates().get(i) + " " + getQualityDescriptionMap().get(i) + "\n";
-				}
-			}else if(getFunctionNum() >= 0xf0 && getFunctionNum() <= 0xff){
-				for (Integer i : this.getDates().keySet()) {
-					s += "遥信点位：" + i + ";值：" + this.getDates().get(i) + " " + "\n";
 				}
 			}
 

@@ -45,9 +45,14 @@ public abstract class AbstractCDTDataHandler {
 			case YM:
 				processYM(dates);
 				break;
+			case SOE:
+				processSOE(dates);
+				break;
 			default:
 		}
 	}
+
+	protected abstract void processSOE(List<BaseDateType> dates) ;
 
 	/**
 	 * 处理重要遥测数据

@@ -2,6 +2,7 @@ package wei.yigulu.cdt.cdtframe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.netty.buffer.ByteBuf;
+import lombok.Setter;
 import wei.yigulu.utils.CrcUtils;
 
 import java.nio.ByteBuffer;
@@ -15,6 +16,7 @@ import java.util.Map;
  **/
 public abstract class BaseDateType<T> {
 
+	@Setter
 	protected int functionNum;
 
 	Map<Integer, T> dates;
@@ -29,11 +31,15 @@ public abstract class BaseDateType<T> {
 		return functionNum;
 	}
 
+	public void readYBDates(byte[] bs,int getFunctionNum){
+
+	}
+
 	public Map getDataJson() throws JsonProcessingException {
 		return null;
 	}
 
-	public void loadBytes(ByteBuf byteBuf) {
+	public void loadBytes(ByteBuf byteBuf) throws InstantiationException, IllegalAccessException {
 		byte[] bs = new byte[5];
 		if (byteBuf.readableBytes() > 5) {
 			byteBuf.readBytes(bs);
@@ -50,7 +56,7 @@ public abstract class BaseDateType<T> {
 	 *
 	 * @param bs 字节数组
 	 */
-	public abstract void readDates(byte[] bs);
+	public abstract void readDates(byte[] bs) throws InstantiationException, IllegalAccessException;
 
 
 	/**
@@ -69,4 +75,7 @@ public abstract class BaseDateType<T> {
 	protected abstract void encode(ByteBuffer byteBuffer);
 
 
+	public Map getYBDataJson() {
+		return null;
+	}
 }

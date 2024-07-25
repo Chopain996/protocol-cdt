@@ -8,6 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.Data;
 import org.slf4j.Logger;
 import wei.yigulu.cdt.cdtframe.BaseDateType;
+import wei.yigulu.cdt.cdtframe.BooleanDataType;
 import wei.yigulu.cdt.cdtframe.CDTFrameBean;
 import wei.yigulu.cdt.cdtframe.IntegerDataType;
 import wei.yigulu.utils.DataConvertor;
@@ -42,7 +43,6 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		log.info("-----连接串口{}成功-----", this.cdtMaster.getCommPortId());
 		this.cdtMaster.getDataHandler().connected();
 	}
-
 
 
 	/**
@@ -85,7 +85,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
 		if (msg.readableBytes() > MINLEN) {
 			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
-			this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
+			//this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
 			//log.info(cdtFrameBean.toString());
 
 			//构建Json
@@ -99,15 +99,23 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 			List dataList = new ArrayList<>();
 			List<BaseDateType> dates = cdtFrameBean.getDates();
 			int i=0;
-			for (BaseDateType date : dates) {
-				if (date instanceof IntegerDataType){
-//					datasMap.put(("信息字"+i),date.getDataJson());
-					dataList.add(date.getDataJson());
-				}else {
-//					datasMap.put(("data"),date.getDataJson());
-					dataList.add(date.getDataJson());
+			jsonMap.put("变位","否");
+			if (dates!=null) {
+				for (BaseDateType date : dates) {
+					if (date instanceof IntegerDataType){
+						if (date.getFunctionNum() >= 0xf0 && date.getFunctionNum() <= 0xff){
+							dataList.add(date.getYBDataJson());
+							jsonMap.put("变位","遥信插针");
+						} else {
+							dataList.add(date.getDataJson());
+						}
+					}else {
+						dataList.add(date.getDataJson());
+					}
+					i++;
 				}
-				i++;
+			}else {
+				dataList.add(null);
 			}
 			jsonMap.put("Datas",dataList);
 			String res = JsonBuilder.JsonToString(jsonMap);

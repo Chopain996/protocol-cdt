@@ -69,7 +69,9 @@ public class CDTFrameBean {
 			this.num = dates.size();
 			if (dates.get(0) instanceof IntegerDataType) {
 				this.cdtType = CDTType.COMMONYC;
-			} else {
+			} else if (dates.get(0) instanceof TimerDataType){
+				this.cdtType = CDTType.SOE;
+			}else {
 				this.cdtType = CDTType.YX;
 			}
 		}
@@ -100,10 +102,14 @@ public class CDTFrameBean {
 		this.destinationAddress = bs[4];
 		BaseDateType dateType;
 		this.dates = new ArrayList<>(this.num);
-		for (int i = 0; i < this.num; i++) {
-			dateType = (BaseDateType) this.cdtType.typeClass.newInstance();
-			dateType.loadBytes(byteBuf);
-			dates.add(dateType);
+		if(this.cdtType.getNo()==0x26){
+			dates=null;
+		} else {
+			for (int i = 0; i < this.num; i++) {
+				dateType = (BaseDateType) this.cdtType.typeClass.newInstance();
+				dateType.loadBytes(byteBuf);
+				dates.add(dateType);
+			}
 		}
 	}
 

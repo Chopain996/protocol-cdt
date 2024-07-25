@@ -14,6 +14,11 @@ public class LocalCDTDataHandler extends AbstractCDTDataHandler {
 
 
 	@Override
+	protected void processSOE(List<BaseDateType> dates) {
+
+	}
+
+	@Override
 	protected void processImportantYc(List<BaseDateType> dates) {
 		saveYc(dates);
 	}

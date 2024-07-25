@@ -14,7 +14,8 @@ public enum CDTType {
 	SECONDYC("次要遥测(B帧)", 0xc2, IntegerDataType.class),
 	COMMONYC("一般遥测(C帧)", 0xb3, IntegerDataType.class),
 	YX("遥信状态(D1帧)", 0xf4, BooleanDataType.class),
-	YM("遥脉(D2帧)",0x85,IntegerDataType.class);
+	YM("遥脉(D2帧)",0x85,IntegerDataType.class),
+	SOE("事件顺序记录(E帧)",0x26,TimerDataType.class);
 
 	@Getter
 	String name;
@@ -40,6 +41,8 @@ public enum CDTType {
 				return YX;
 			case 0x85:
 				return YM;
+			case 0x26:
+				return SOE;
 			default:
 				return null;
 		}

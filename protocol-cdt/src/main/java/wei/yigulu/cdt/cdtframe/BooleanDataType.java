@@ -46,6 +46,8 @@ public class BooleanDataType extends BaseDateType<Boolean> {
 
 	}
 
+
+
 	@Override
 	public void readDates(byte[] bs) {
 		this.dates = new HashMap<>(32);
@@ -61,6 +63,12 @@ public class BooleanDataType extends BaseDateType<Boolean> {
 			this.dates.put(num + i * 8 + 7, (bs[i] & 0x80) == 0x80);
 		}
 	}
+
+	public void readYBDates(byte[] bs,int getFunctionNum) {
+		super.setFunctionNum(getFunctionNum);
+		readDates(bs);
+	}
+
 
 	@Override
 	public Map<Integer, Boolean> getDates() {
