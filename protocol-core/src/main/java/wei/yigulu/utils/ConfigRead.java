@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public  class ConfigRead {
-    private static final String FILE_PATH = "E:\\code\\protocol\\mainuse\\src\\main\\java\\wei\\yigulu\\config\\config.json"; // 修改为实际路径
+
+    private static final String FILE_PATH = "E:\\code\\protocol\\protocol-core\\src\\main\\resources\\config.json"; // 修改为实际路径
     public static Map<String, Object> configMap = new HashMap<>();
 
     public ConfigRead(){

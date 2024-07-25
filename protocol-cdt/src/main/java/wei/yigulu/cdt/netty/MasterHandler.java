@@ -86,11 +86,12 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		if (msg.readableBytes() > MINLEN) {
 			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
 			this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
-			log.info(cdtFrameBean.toString());
+			//log.info(cdtFrameBean.toString());
 
 			//构建Json
 			Map<String, Object> jsonMap = new LinkedHashMap<>();
-			jsonMap.put("消息类型",cdtFrameBean.getCdtType().toString());
+			jsonMap.put("消息类型", cdtFrameBean.getCdtType().getName());
+			jsonMap.put("消息类型码","0x"+Integer.toHexString(cdtFrameBean.getCdtType().getNo()));
 			jsonMap.put("信息字数",cdtFrameBean.getNum());
 			jsonMap.put("源站址",cdtFrameBean.getSourceAddress());
 			jsonMap.put("目的站址",cdtFrameBean.getDestinationAddress());
@@ -110,6 +111,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 			}
 			jsonMap.put("Datas",dataList);
 			String res = JsonBuilder.JsonToString(jsonMap);
+			log.info(res);
 			//Jedis存储
 			jedis.setValue(res);
 		}

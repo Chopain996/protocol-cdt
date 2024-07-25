@@ -1,5 +1,7 @@
 package wei.yigulu.cdt.cdtframe;
 
+import lombok.Getter;
+
 /**
  * CDT 数据类型
  *
@@ -14,7 +16,9 @@ public enum CDTType {
 	YX("遥信状态(D1帧)", 0xf4, BooleanDataType.class),
 	YM("遥脉(D2帧)",0x85,IntegerDataType.class);
 
+	@Getter
 	String name;
+	@Getter
 	int no;
 	Class typeClass;
 

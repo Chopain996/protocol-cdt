@@ -2,6 +2,8 @@ package wei.yigulu.utils;
 
 import redis.clients.jedis.Jedis;
 
+import static wei.yigulu.utils.ConfigRead.configMap;
+
 public class JedisUtil {
 
     public static Jedis jedis;
@@ -11,8 +13,8 @@ public class JedisUtil {
     }
 
     public void getJedis() {
-        jedis = new Jedis("192.168.232.128", 6379);
-        jedis.auth("123456");
+        jedis = new Jedis(configMap.get("redisHost").toString(), Integer.parseInt(configMap.get("redisPort").toString()));
+        jedis.auth(configMap.get("redisPass").toString());
     }
 
     public void setValue(String json_string) {

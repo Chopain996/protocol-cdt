@@ -1,0 +1,7 @@
+{
+  "COM": "COM2",
+  "baudRate": 9600,
+  "redisHost": "192.168.232.128",
+  "redisPass": "123456",
+  "redisPort": 6379
+}
