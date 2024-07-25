@@ -2,15 +2,19 @@ package wei.yigulu.cdt.netty;
 
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.Data;
 import org.slf4j.Logger;
+import wei.yigulu.cdt.cdtframe.BaseDateType;
 import wei.yigulu.cdt.cdtframe.CDTFrameBean;
+import wei.yigulu.cdt.cdtframe.IntegerDataType;
 import wei.yigulu.utils.DataConvertor;
+import wei.yigulu.utils.JedisUtil;
+import wei.yigulu.utils.JsonBuilder;
 
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -72,15 +76,42 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	}
 
 
+
+	JedisUtil jedis = new JedisUtil();
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-
 		log.info("接收到串口{}发来数据帧:" + DataConvertor.ByteBuf2String(msg), this.cdtMaster.getCommPortId());
 
 		if (msg.readableBytes() > MINLEN) {
 			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
 			this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
 			log.info(cdtFrameBean.toString());
+
+			//构建Json
+			Map<String, Object> jsonMap = new LinkedHashMap<>();
+			jsonMap.put("消息类型",cdtFrameBean.getCdtType().toString());
+			jsonMap.put("信息字数",cdtFrameBean.getNum());
+			jsonMap.put("源站址",cdtFrameBean.getSourceAddress());
+			jsonMap.put("目的站址",cdtFrameBean.getDestinationAddress());
+			// 获取DataJsonString
+			List dataList = new ArrayList<>();
+			List<BaseDateType> dates = cdtFrameBean.getDates();
+			int i=0;
+			for (BaseDateType date : dates) {
+				if (date instanceof IntegerDataType){
+//					datasMap.put(("信息字"+i),date.getDataJson());
+					dataList.add(date.getDataJson());
+				}else {
+//					datasMap.put(("data"),date.getDataJson());
+					dataList.add(date.getDataJson());
+				}
+				i++;
+			}
+			jsonMap.put("Datas",dataList);
+			String res = JsonBuilder.JsonToString(jsonMap);
+			//Jedis存储
+			jedis.setValue(res);
 		}
 	}
 

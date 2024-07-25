@@ -1,16 +1,15 @@
 package wei.yigulu.cdt.cdtframe;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import wei.yigulu.utils.CrcUtils;
+import wei.yigulu.utils.JsonBuilder;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 遥测数据
@@ -28,6 +27,8 @@ public class IntegerDataType extends BaseDateType<Integer> {
 
 	@Getter
 	private Map<Integer, YMQualityDescription> YMqualityDescriptionMap;
+
+
 
 
 
@@ -89,6 +90,25 @@ public class IntegerDataType extends BaseDateType<Integer> {
 				this.YMqualityDescriptionMap = new HashMap<>();
 			}
 		}
+
+	}
+
+	public Map getDataJson() throws JsonProcessingException {
+		HashMap<String, String> dataMap = new HashMap<>();
+		ArrayList<String> dataDetail = new ArrayList<>(2);
+
+		for (Integer i : this.dates.keySet()) {
+			dataDetail.add(this.dates.get(i).toString());
+			if (getFunctionNum() <= 0x7f){
+				dataDetail.add(this.getQualityDescriptionMap().get(i).toString());
+			}else if(getFunctionNum() <= 0xdf && getFunctionNum() >= 0xa0){
+				dataDetail.add(this.getYMqualityDescriptionMap().get(i).toString());
+			}
+			dataMap.put(String.valueOf(i), dataDetail.toString());
+			dataDetail.clear();
+		}
+		return dataMap;
+
 
 	}
 

@@ -52,7 +52,7 @@ public class DataContainer {
 
 	@Override
 	public String toString() {
-		return (JSON.toJSONString(this.yxData) + JSON.toJSONString(this.ycData));
+		return (JSON.toJSONString(this.yxData) + JSON.toJSONString(this.ycData)+JSON.toJSONString(this.ymData));
 	}
 
 

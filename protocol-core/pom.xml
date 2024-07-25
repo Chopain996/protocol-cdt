@@ -14,6 +14,23 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- Jackson核心 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <!-- Jackson提供数据绑定功能 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.8.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.fazecast/jSerialComm -->
         <dependency>
             <groupId>com.fazecast</groupId>

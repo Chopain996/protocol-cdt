@@ -124,6 +124,7 @@ public class CDTFrameBean {
 	}
 
 
+
 	@Override
 	public String toString() {
 
@@ -138,6 +139,7 @@ public class CDTFrameBean {
 				s += b.toString();
 			}
 		}
+
 		return s;
 	}
 }

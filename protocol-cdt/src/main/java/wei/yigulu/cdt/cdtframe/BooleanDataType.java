@@ -1,13 +1,12 @@
 package wei.yigulu.cdt.cdtframe;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.NoArgsConstructor;
 import wei.yigulu.utils.CrcUtils;
+import wei.yigulu.utils.JsonBuilder;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 遥信数据类型
@@ -88,6 +87,14 @@ public class BooleanDataType extends BaseDateType<Boolean> {
 		byteBuffer.put((byte) CrcUtils.generateCRC8(bytes));
 	}
 
+	public Map getDataJson() throws JsonProcessingException {
+		HashMap<String, Boolean> dataMap = new HashMap<>();
+		for (Integer i : this.dates.keySet()) {
+			dataMap.put(String.valueOf(i), this.dates.get(i));
+		}
+
+		return dataMap;
+	}
 
 	@Override
 	public String toString() {

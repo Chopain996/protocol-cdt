@@ -1,5 +1,6 @@
 package wei.yigulu.cdt.cdtframe;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.netty.buffer.ByteBuf;
 import wei.yigulu.utils.CrcUtils;
 
@@ -26,6 +27,10 @@ public abstract class BaseDateType<T> {
 
 	public int getFunctionNum() {
 		return functionNum;
+	}
+
+	public Map getDataJson() throws JsonProcessingException {
+		return null;
 	}
 
 	public void loadBytes(ByteBuf byteBuf) {
