@@ -82,46 +82,48 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
 		log.info("接收到串口{}发来数据帧:" + DataConvertor.ByteBuf2String(msg), this.cdtMaster.getCommPortId());
+		synchronized (this){
+			if (msg.readableBytes() > MINLEN) {
+				CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
+				//this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
+				//log.info(cdtFrameBean.toString());
 
-		if (msg.readableBytes() > MINLEN) {
-			CDTFrameBean cdtFrameBean = new CDTFrameBean(msg);
-			//this.cdtMaster.getDataHandler().processFrame(cdtFrameBean);
-			//log.info(cdtFrameBean.toString());
-
-			//构建Json
-			Map<String, Object> jsonMap = new LinkedHashMap<>();
-			jsonMap.put("消息类型", cdtFrameBean.getCdtType().getName());
-			jsonMap.put("消息类型码","0x"+Integer.toHexString(cdtFrameBean.getCdtType().getNo()));
-			jsonMap.put("信息字数",cdtFrameBean.getNum());
-			jsonMap.put("源站址",cdtFrameBean.getSourceAddress());
-			jsonMap.put("目的站址",cdtFrameBean.getDestinationAddress());
-			// 获取DataJsonString
-			List dataList = new ArrayList<>();
-			List<BaseDateType> dates = cdtFrameBean.getDates();
-			int i=0;
-			jsonMap.put("变位","否");
-			if (dates!=null) {
-				for (BaseDateType date : dates) {
-					if (date instanceof IntegerDataType){
-						if (date.getFunctionNum() >= 0xf0 && date.getFunctionNum() <= 0xff){
-							dataList.add(date.getYBDataJson());
-							jsonMap.put("变位","遥信插针");
-						} else {
+				//构建Json
+				Map<String, Object> jsonMap = new LinkedHashMap<>();
+				jsonMap.put("消息类型", cdtFrameBean.getCdtType().getName());
+				jsonMap.put("消息类型码","0x"+Integer.toHexString(cdtFrameBean.getCdtType().getNo()));
+				jsonMap.put("信息字数",cdtFrameBean.getNum());
+				jsonMap.put("源站址",cdtFrameBean.getSourceAddress());
+				jsonMap.put("目的站址",cdtFrameBean.getDestinationAddress());
+				// 获取DataJsonString
+				List dataList = new ArrayList<>();
+				List<BaseDateType> dates = cdtFrameBean.getDates();
+				int i=0;
+				jsonMap.put("变位","否");
+				if (dates!=null) {
+					for (BaseDateType date : dates) {
+						if (date instanceof IntegerDataType){
+							if (date.getFunctionNum() >= 0xf0 && date.getFunctionNum() <= 0xff){
+								dataList.add(date.getYBDataJson());
+								jsonMap.put("变位","遥信插针");
+							} else {
+								dataList.add(date.getDataJson());
+							}
+						}else {
 							dataList.add(date.getDataJson());
 						}
-					}else {
-						dataList.add(date.getDataJson());
+						i++;
 					}
-					i++;
+				}else {
+					dataList.add(null);
 				}
-			}else {
-				dataList.add(null);
+				jsonMap.put("Datas",dataList);
+				String res = JsonBuilder.JsonToString(jsonMap);
+
+				//Jedis存储
+				String s = jedis.setValue(res);
+				log.info("key:{},value:{}", s, res);
 			}
-			jsonMap.put("Datas",dataList);
-			String res = JsonBuilder.JsonToString(jsonMap);
-			log.info(res);
-			//Jedis存储
-			jedis.setValue(res);
 		}
 	}
 
