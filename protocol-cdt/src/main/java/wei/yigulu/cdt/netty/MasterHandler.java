@@ -7,10 +7,7 @@ import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.Data;
 import org.slf4j.Logger;
-import wei.yigulu.cdt.cdtframe.BaseDateType;
-import wei.yigulu.cdt.cdtframe.BooleanDataType;
-import wei.yigulu.cdt.cdtframe.CDTFrameBean;
-import wei.yigulu.cdt.cdtframe.IntegerDataType;
+import wei.yigulu.cdt.cdtframe.*;
 import wei.yigulu.utils.DataConvertor;
 import wei.yigulu.utils.JedisUtil;
 import wei.yigulu.utils.JsonBuilder;
@@ -106,7 +103,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 							if (date.getFunctionNum() >= 0xf0 && date.getFunctionNum() <= 0xff){
 								dataList.add(date.getYBDataJson());
 								jsonMap.put("变位","遥信插针");
-							} else {
+							} else if(date instanceof TimerDataType) {
 								dataList.add(date.getDataJson());
 							}
 						}else {

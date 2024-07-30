@@ -2,6 +2,7 @@ package wei.yigulu.cdt.cdtframe;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,12 +23,25 @@ public class TimerDataType extends BaseDateType<Integer> {
 	 * 质量位描述的map
 	 */
 	@Getter
-	private Map<Integer, QualityDescription> qualityDescriptionMap;
+	private Integer ms;
 
 	@Getter
-	private Map<Integer, YMQualityDescription> YMqualityDescriptionMap;
+	private Integer s;
 
+	@Getter
+	private Integer m;
 
+	@Getter
+	private Integer h;
+
+	@Getter
+	private Integer d;
+
+	@Getter
+	private Integer targetNumber;
+
+	@Getter
+	private Integer isClosed;
 
 
 
@@ -38,10 +52,9 @@ public class TimerDataType extends BaseDateType<Integer> {
 	 * 由于cdt协议中一个功能码中有2个整数值  所有 最小的点位须为2的整数倍
 	 *
 	 * @param dates     数据
-	 * @param qualities 品质
 	 */
 
-	public TimerDataType(Map<Integer, Integer> dates, Map<Integer,? extends Description> qualities) {
+	public TimerDataType(Map<Integer, Integer> dates) {
 		if (dates.size() == 0) {
 			throw new RuntimeException("数据个数不能为0");
 		}
@@ -62,73 +75,93 @@ public class TimerDataType extends BaseDateType<Integer> {
 //		}else if(getFunctionNum() <= 0xdf&& getFunctionNum() >= 0xa0) {
 //			this.YMqualityDescriptionMap = qualities == null ? new HashMap<>() : qualities;
 //		}
-		if (getFunctionNum() <= 0x7f) {
-			if(qualities != null) {
-				this.qualityDescriptionMap = new HashMap<>();
-				qualities.forEach((key, value) -> {
-					if (value instanceof QualityDescription) {
-						this.qualityDescriptionMap.put(key, (QualityDescription) value);
-					} else {
-						throw new IllegalArgumentException("Quality map contains an incorrect type");
-					}
-				});
+		if (getFunctionNum() == 0x80 || getFunctionNum() == 0x81) {
+			if(this.getMs()>0&&this.getS()>0&&this.getM()>0&&this.getH()>0&&this.getD()>0&&this.getTargetNumber()>0) {
+				System.out.println("SOE数据数据都存在值");
+
 			} else {
-				this.qualityDescriptionMap = new HashMap<>();
+				System.out.println("SOE数据数据值都为空");
 			}
-		} else if (getFunctionNum() <= 0xdf && getFunctionNum() >= 0xa0) {
-			if(qualities != null) {
-				this.YMqualityDescriptionMap = new HashMap<>();
-				qualities.forEach((key, value) -> {
-					if (value instanceof YMQualityDescription) {
-						this.YMqualityDescriptionMap.put(key, (YMQualityDescription) value);
-					} else {
-						throw new IllegalArgumentException("Quality map contains an incorrect type");
-					}
-				});
-			} else {
-				this.YMqualityDescriptionMap = new HashMap<>();
-			}
+		} else {
+			System.out.println("SOE数据功能码非80或81H,异常，返回");
 		}
 
 	}
 
 	public Map getDataJson() throws JsonProcessingException {
 		HashMap<String, String> dataMap = new HashMap<>();
-		ArrayList<String> dataDetail = new ArrayList<>(2);
 
 		for (Integer i : this.dates.keySet()) {
-			dataDetail.add(this.dates.get(i).toString());
-			if (getFunctionNum() <= 0x7f){
-				dataDetail.add(this.getQualityDescriptionMap().get(i).toString());
-			}else if(getFunctionNum() <= 0xdf && getFunctionNum() >= 0xa0){
-				dataDetail.add(this.getYMqualityDescriptionMap().get(i).toString());
-			}
-			dataMap.put(String.valueOf(i), dataDetail.toString());
-			dataDetail.clear();
+
+			dataMap.put(String.valueOf(i), this.dates.get(i).toString());
+
 		}
 		return dataMap;
+	}
+
+	public void loadBytes(ByteBuf byteBuf) throws InstantiationException, IllegalAccessException {
+		this.dates=new HashMap<>();
+		byte[] bs1 = new byte[5];
+		byte[] bs2 = new byte[5];
+		if (byteBuf.readableBytes() > 5) {
+			byteBuf.readBytes(bs1);
+			this.functionNum = bs1[0] & 0xff;
+			this.crc = byteBuf.readByte();
+			if ((this.crc & 0xff) == CrcUtils.generateCRC8(bs1)) {
+				readDates(Arrays.copyOfRange(bs1, 1, bs1.length));
+			}
+		}
+		if (byteBuf.readableBytes() > 5) {
+			byteBuf.readBytes(bs2);
+			this.functionNum = bs2[0] & 0xff;
+			this.crc = byteBuf.readByte();
+			if ((this.crc & 0xff) == CrcUtils.generateCRC8(bs2)) {
+				readDates(Arrays.copyOfRange(bs2, 1, bs2.length));
+			}
+		}
+	}
+
+	@Override
+	public void readDates(byte[] bs) {
+		//SOE功能码处于80H和81H
+		//毫秒，秒，分在80H
+		//小时，日在81H，对象号和开关状态在81H
+		if(getFunctionNum() == 0x80||getFunctionNum() == 0x81){
+			if (getFunctionNum() == 0x80) {
+				this.ms=decode2Int(bs[0],bs[1]);
+				this.s=bs[2]&0x3f;
+				this.m=bs[3]&0x3f;
+				this.dates.put(0,this.ms);
+				this.dates.put(1,this.s);
+				this.dates.put(2,this.m);
+			}else if(getFunctionNum() == 0x81) {
+				this.h=bs[0]&0x3f;
+				this.d=bs[1]&0x3f;
+				this.targetNumber=decodeTarget2Int(bs[2],bs[3]);
+				this.dates.put(3,this.h);
+				this.dates.put(4,this.d);
+				this.dates.put(5,this.targetNumber);
+			}
+			this.dates.put(6, this.isClosed);
+		}
 
 
 	}
 
 
-	@Override
-	public void readDates(byte[] bs) {
-		//功能码处于00H-7FH之间的是遥测  86H-89H是总加遥测 忽略总加遥测
-		//遥测二进制  b14位为1代表溢出,b15位为1 代表无效  有效数据位 为 b0-b10  b11为1时代表负数  以2的补码表述
-		if (getFunctionNum() <= 0x7f) {
-			this.dates = new HashMap<>(2);
-			this.qualityDescriptionMap = new HashMap<>(2);
-			this.dates.put(super.getFunctionNum() * 2, decode2Int(bs[0], bs[1]));
-			this.qualityDescriptionMap.put(super.getFunctionNum() * 2, new QualityDescription(bs[1]));
-			this.dates.put(super.getFunctionNum() * 2 + 1, decode2Int(bs[2], bs[3]));
-			this.qualityDescriptionMap.put(super.getFunctionNum() * 2 + 1, new QualityDescription(bs[3]));
-		}else if(getFunctionNum() <= 0xdf&& getFunctionNum() >= 0xa0) {
-			this.dates = new HashMap<>(1);
-			this.YMqualityDescriptionMap = new HashMap<>(1);
-			this.dates.put(super.getFunctionNum(), decode2Int(bs[0], bs[1],bs[2],bs[3]));
-			this.YMqualityDescriptionMap.put(super.getFunctionNum(), new YMQualityDescription(bs[3]));
+	/**
+	 * 转化成CDT的int型
+	 *
+	 * @param b1
+	 * @param b2
+	 * @return
+	 */
+	private Integer decodeTarget2Int(Byte b1, Byte b2) {
+		int i = (b1 & 0xff) | (b2 & 0x0f) << 8;
+		if ((b2>>8 & 0x01) == 1) {
+			this.isClosed=1;
 		}
+		return i;
 	}
 
 	/**
@@ -139,10 +172,10 @@ public class TimerDataType extends BaseDateType<Integer> {
 	 * @return
 	 */
 	private Integer decode2Int(Byte b1, Byte b2) {
-		int i = (b1 & 0xff) | (b2 & 0x07) << 8;
-		if ((b2 >> 3 & 0x01) == 1) {
-			i = (2048 - i) * -1;
-		}
+		int i = (b1 & 0xff) | (b2 & 0x03) << 8;
+//		if ((b2 >> 3 & 0x01) == 1) {
+//			i = (2048 - i) * -1;
+//		}
 		return i;
 	}
 	/**
@@ -182,41 +215,8 @@ public class TimerDataType extends BaseDateType<Integer> {
 
 	@Override
 	protected void encode(ByteBuffer byteBuffer) {
-		int min = Collections.min(getDates().keySet());
-		int val;
-		int iVal;
-		this.functionNum = min / 2;
-		byte[] bytes = new byte[]{(byte) this.functionNum, 0, 0, 0, 0};
-		for (int i = 0; i < 2; i++) {
-			if (getDates().containsKey(min + i)) {
-				val = getDates().get(min + i);
-				if (val >= 00) {
-					//正数
-					bytes[2 * i + 1] = (byte) val;
-					bytes[2 * i + 2] = (byte) (((byte) (val >> 8)) & 07);
-				} else {
-					//负数
-					//清零前五位的数值
-					iVal = (val * -1) & 0x07ff;
-					//先减一再反转
-					iVal = 2048 - iVal;
-					bytes[2 * i + 1] = (byte) iVal;
-					bytes[2 * i + 2] = (byte) (iVal >> 8);
-					bytes[2 * i + 2] = (byte) (bytes[2 * i + 2] | (1 << 3));
-				}
-				if (val > 2047 || val < -2048) {
-					//溢出
-					bytes[2 * i + 2] = (byte) (bytes[2 * i + 2] | (1 << 6));
-				}
-				if (getQualityDescriptionMap().containsKey(min + i) &&
-						!getQualityDescriptionMap().get(min + i).getInvalid()) {
-					//无效
-					bytes[2 * i + 2] = (byte) (bytes[2 * i + 2] | (1 << 7));
-				}
-			}
-		}
-		byteBuffer.put(bytes);
-		byteBuffer.put((byte) CrcUtils.generateCRC8(bytes));
+
+		System.out.println("there is no implment for TimerDataType encode()");
 	}
 
 
@@ -224,72 +224,13 @@ public class TimerDataType extends BaseDateType<Integer> {
 	public String toString() {
 		String s = "";
 		if (this.dates != null) {
-			if(this.getFunctionNum() <= 0xdf&& this.getFunctionNum() >= 0xa0){
-				for (Integer i : this.getDates().keySet()) {
-					s += "第" + i + "路脉冲;值：" + this.getDates().get(i) + " " + getYMqualityDescriptionMap().get(i) + "\n";
-				}
-			}else {
-				for (Integer i : this.getDates().keySet()) {
-					s += "遥测点位：" + i + ";值：" + this.getDates().get(i) + " " + getQualityDescriptionMap().get(i) + "\n";
-				}
-			}
+			if(this.getFunctionNum() == 0x80|| this.getFunctionNum() == 0x81){
+				s += this.getD()+"-"+this.getH()+":"+this.getM()+":"+this.getS()+":"+this.getMs()+"==>  Target:"+this.getTargetNumber()+"\n";
 
+			}
 		}
 		return s;
 	}
 
 
-	@Data
-	class YMQualityDescription extends Description {
-		/**
-		 * 是否溢出 false 即为不溢出
-		 */
-		Boolean uesbcd = false;
-		/**
-		 * 是否无效 false 即为有效
-		 */
-		Boolean invalid = false;
-
-		public YMQualityDescription(Byte b) {
-			if ((b >> 5 & 0x01) == 1) {
-				this.uesbcd = true;
-			}
-			if ((b >> 7 & 0x01) == 1) {
-				this.invalid = true;
-			}
-		}
-
-		@Override
-		public String toString() {
-			return (uesbcd ? "BCD表示" : "") + " " + (invalid ? "无效" : "有效");
-		}
-
-	}
-
-	@Data
-	class QualityDescription extends Description {
-		/**
-		 * 是否溢出 false 即为不溢出
-		 */
-		Boolean overflow = false;
-		/**
-		 * 是否无效 false 即为有效
-		 */
-		Boolean invalid = false;
-
-		public QualityDescription(Byte b) {
-			if ((b >> 6 & 0x01) == 1) {
-				this.overflow = true;
-			}
-			if ((b >> 7 & 0x01) == 1) {
-				this.invalid = true;
-			}
-		}
-
-		@Override
-		public String toString() {
-			return (overflow ? "溢出" : "") + " " + (invalid ? "无效" : "有效");
-		}
-
-	}
 }

@@ -103,7 +103,11 @@ public class CDTFrameBean {
 		BaseDateType dateType;
 		this.dates = new ArrayList<>(this.num);
 		if(this.cdtType.getNo()==0x26){
-			dates=null;
+			for (int i = 0; i < this.num/2; i++) {
+				dateType = (TimerDataType) this.cdtType.typeClass.newInstance();
+				dateType.loadBytes(byteBuf);
+				dates.add(dateType);
+			}
 		} else {
 			for (int i = 0; i < this.num; i++) {
 				dateType = (BaseDateType) this.cdtType.typeClass.newInstance();

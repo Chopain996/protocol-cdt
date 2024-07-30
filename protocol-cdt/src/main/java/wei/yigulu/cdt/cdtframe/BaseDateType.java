@@ -36,6 +36,7 @@ public abstract class BaseDateType<T> {
 	}
 
 	public Map getDataJson() throws JsonProcessingException {
+
 		return null;
 	}
 
