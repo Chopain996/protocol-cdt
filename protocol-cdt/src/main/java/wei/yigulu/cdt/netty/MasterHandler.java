@@ -103,9 +103,11 @@ public class MasterHandler extends SimpleChannelInboundHandler<ByteBuf> {
 							if (date.getFunctionNum() >= 0xf0 && date.getFunctionNum() <= 0xff){
 								dataList.add(date.getYBDataJson());
 								jsonMap.put("变位","遥信插针");
-							} else if(date instanceof TimerDataType) {
+							} else {
 								dataList.add(date.getDataJson());
 							}
+						}else if(date instanceof TimerDataType)  {
+							dataList.add(date.getDataJson());
 						}else {
 							dataList.add(date.getDataJson());
 						}
