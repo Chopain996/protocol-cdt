@@ -13,6 +13,7 @@
         <module>protocol-cdt</module>
         <module>protocol-all</module>
         <module>mainuse</module>
+        <module>protocol-iec101</module>
     </modules>
 
 

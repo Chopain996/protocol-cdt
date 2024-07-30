@@ -1,14 +1,21 @@
-fork自[weiyigulu](https://gitee.com/weiyigulu_admin/protocol)，删掉了其他协议，保留CDT，增加了①CDT的**遥脉**解析，②**变位插帧遥信报文**解析，③数据存入Redis
 
-运行环境：Java1.8
+CDT目前支持：
+①遥测解析
+②遥信解析
+③遥脉解析
+④变位插帧遥信报文解析
 
+CDT目前不支持：
+①下行报文解析，即主站发往从站的控制报文
+
+
+运行环境：Java1.8+Maven
 使用到的库：Netty+Jedis+JSerial
-
 
 
 ### 1.配置文件json
 
-配置文件config.json位于`protocol-core/src/main/`的`resource`文件下。
+解析数据存入Redis，配置文件位于`protocol-core/src/main/resources/config.json`，配置Redis相关，串口相关
 
 ```json
 {
@@ -19,7 +26,6 @@ fork自[weiyigulu](https://gitee.com/weiyigulu_admin/protocol)，删掉了其他
   "redisPort": 6379
 }
 ```
-
 
 
 ### 2.redis存入json格式
